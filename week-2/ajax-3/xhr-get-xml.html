@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title>XHR - Load Text</title>
+	<style>
+	body{
+	  font-family: sans-serif;
+	}
+	</style>
+
+</head>
+<body>
+	<h2>XHR - Load XML File</h2>
+		
+	<hr>
+	<button id="my-button">Load Data</button>
+	<div id="output">Click button to load</div>
+	
+
+<script>
+    document.querySelector("#my-button").onclick = loadXMLXHR;
+
+    function loadXMLXHR() {
+        const url = "data/pet-names.xml";
+        const xhr = new XMLHttpRequest();
+        xhr.onload = (e) => {
+            const xml = e.target.responseXML;
+            if (!xml) {
+                document.querySelector("#output").innerHTML = "XML is null!";
+                return;
+            }
+            const dogNames = xml.querySelector("namelist[cid='dognames']").textContent.split(",");
+            const catNames = xml.querySelector("namelist[cid='catnames']").textContent.split(",");
+
+            const dogHTML = `<ol>${dogNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+            const catHTML = `<ol>${catNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+
+            const html = `
+                <h3>Dog Names</h3>
+                ${dogHTML}
+                <h3>Cat Names</h3>
+                ${catHTML}
+            `;
+
+            document.querySelector("#output").innerHTML = html;
+
+        };
+
+        xhr.onerror = e => console.log(`In onerror - HTTP Status code = ${e.target.status}`);
+        xhr.open("GET", url);
+        xhr.send();
+    }
+</script>
+</body>
+</html>
