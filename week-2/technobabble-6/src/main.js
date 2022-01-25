@@ -2,7 +2,7 @@
         let words2;
         let words3;
 
-        init();
+        loadJsonXHR();
 
         function generateBabble(num){
 
@@ -37,6 +37,10 @@
                 words3 = json.words3;
 
                 generateBabble(1);
+                const gen1 = document.querySelector("#my-button");
+                gen1.onclick = () => generateBabble(1);
+                const gen5 = document.querySelector("#gen-5");
+                gen5.onclick = () => generateBabble(5);
             };
     
             xhr.onerror = (e) => {
@@ -47,12 +51,4 @@
             };
             xhr.open("GET", url);
             xhr.send();
-        }
-
-        function init(){
-            loadJsonXHR();
-            const gen1 = document.querySelector("#my-button");
-            gen1.onclick = () => generateBabble(1);
-            const gen5 = document.querySelector("#gen-5");
-            gen5.onclick = () => generateBabble(5);
         }

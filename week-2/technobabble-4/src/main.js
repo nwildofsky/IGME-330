@@ -2,7 +2,7 @@
         let words2;
         let words3;
 
-        init();
+        loadCSVXHR();
 
         function generateBabble(num){
 
@@ -33,6 +33,10 @@
                 words3 = lines[2].split(",");
 
                 generateBabble(1);
+                const gen1 = document.querySelector("#my-button");
+                gen1.onclick = () => generateBabble(1);
+                const gen5 = document.querySelector("#gen-5");
+                gen5.onclick = () => generateBabble(5);
             };
     
             xhr.onerror = (e) => {
@@ -43,12 +47,4 @@
             };
             xhr.open("GET", url);
             xhr.send();
-        }
-
-        function init(){
-            loadCSVXHR();
-            const gen1 = document.querySelector("#my-button");
-            gen1.onclick = () => generateBabble(1);
-            const gen5 = document.querySelector("#gen-5");
-            gen5.onclick = () => generateBabble(5);
         }
