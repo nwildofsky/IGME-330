@@ -20,13 +20,7 @@ const createBlackoutText = () => {
   // Test it!
   string = string.trim().split(" ");
   output.innerHTML = string.map(s => `<span>${s}</span>`).join("");
-  const words = document.querySelectorAll("span");
-  for (let s of words) {
-    s.onclick = toggleBackground;
-  }
-  /* for (let s of words) {
-
-  } */
+  output.onclick = toggleBackground;
 }	
 
 const setupUI = json => {
