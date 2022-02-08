@@ -108,6 +108,7 @@
 		set items(val) {
 			console.log(`items setter called with val = ${val}`);
 			this._items = [...val]; // copy the array
+			this.lengthChanged();
 			this.render();
 		}
 	
