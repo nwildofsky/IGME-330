@@ -1,0 +1,70 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quake Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+  <nav class="navbar has-shadow is-white">
+    <!-- logo / brand -->
+    <div class="navbar-brand">
+      <a class="navbar-item is-size-5 has-text-weight-medium" href="index.html">
+        Quake Tracker
+      </a>
+      <a class="navbar-burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="nav-links">
+      <div class="navbar-start">
+        <a class="navbar-item" href="./index.html">
+          Home
+        </a>
+
+        <a class="navbar-item is-hoverable" href="./app.html">
+          App
+        </a>
+
+        <a class="navbar-item is-hoverable" href="./favorites.html">
+          Favorites
+        </a>
+
+        <a class="navbar-item is-hoverable" href="./documentation.html">
+          Documentation
+        </a>
+      </div> <!-- end navbar-start -->
+    </div>
+  </nav>
+
+  <custom-header></custom-header>
+
+  <section class="hero is-fullheight-with-navbar is-link">
+    <div class="hero-body">
+      <div class="container">
+        <p class="title is-size-2 has-text-weight-medium">Favorites Page</p>
+        <p class="is-size-5">This will maybe be a place to save certain earthquake information
+          or it could be a page with multiple statistics about earthquakes recently vs earthquakes in the past
+          and where earthquakes are appearing most currently.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <custom-footer></custom-footer>
+
+
+  <script src="./src/index.js"></script>
+  <script type="module" src="./src/init.js"></script>
+</body>
+
+</html>

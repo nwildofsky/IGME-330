@@ -1,0 +1,89 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quake Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+  <nav class="navbar has-shadow is-white">
+    <!-- logo / brand -->
+    <div class="navbar-brand">
+      <a class="navbar-item is-size-5 has-text-weight-medium" href="index.html">
+        Quake Tracker
+      </a>
+      <a class="navbar-burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="nav-links">
+      <div class="navbar-start">
+        <a class="navbar-item" href="./index.html">
+          Home
+        </a>
+
+        <a class="navbar-item is-hoverable" href="./app.html">
+          App
+        </a>
+
+        <a class="navbar-item is-hoverable" href="./favorites.html">
+          Favorites
+        </a>
+
+        <a class="navbar-item is-hoverable" href="./documentation.html">
+          Documentation
+        </a>
+      </div> <!-- end navbar-start -->
+    </div>
+  </nav>
+
+  <custom-header></custom-header>
+
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-4">
+          <p>This application will make use of the USGS EQ Catalog API which has a multitude of data about
+            current and past earthquakes. The API's documentation is here:
+            <a href="https://earthquake.usgs.gov/fdsnws/event/1/">https://earthquake.usgs.gov/fdsnws/event/1/</a>
+          </p>
+          <p class="my-6">
+            The API allows you to query for earthquakes that have occured after or before a given time frame, 
+            earthquates within given longitude and latitude constraints, and for earthquakes based on their magnitude,
+            depth, alert level and many other parameters. I plan to use searches based on the earthquakes coordinates to
+            only load earthquakes on the screen that are able to be seen, and refresh the search whenever the user zooms
+            in or out. I will have to optimize the code so that the application is not laggy during this process.
+          </p>
+          <p class="my-6">
+            The ability to place the coordinates given by the EQ Catalog API on an interactive map is not a feature contained
+            within the API so I plan to use the Mapbox tool to create a map and texture it and then I will have to use a formula
+            to take longitude and latitude values and convert them to x and y values that Mapbox understands.  
+          </p>
+        </div>
+        <div class="column is-8">
+          <div class="mx-4 px-6">
+            <h2 class="mb-4 is-size-5">Rough Sketch of Planned Application Interface</h2>
+            <img src="./images/app_sketch.jpg">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <custom-footer></custom-footer>
+
+
+  <script src="./src/index.js"></script>
+  <script type="module" src="./src/init.js"></script>
+</body>
+
+</html>
