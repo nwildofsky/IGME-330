@@ -22,8 +22,8 @@
 <script>
 	document.querySelector("#my-button").onclick = loadJsonXHR;
 	function loadJsonXHR(){
-		const url = "https://dog.ceo/api/breeds/image/random";
-		// https://dog.ceo/api/breed/hound/images/random/10
+		const url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01";
+		// https://earthquake.usgs.gov/fdsnws/event/1/[METHOD[?PARAMETERS]]
 		const xhr = new XMLHttpRequest();
 		xhr.onload = (e) => {
 			console.log(`In onload - HTTP Status Code = ${e.target.status}`);
@@ -34,16 +34,16 @@
 				document.querySelector("#output").innerHTML = "<p>BAD JSON!</p>";
 				return;
 			}
-			//document.querySelector("#output").innerHTML = "<p>Some JSON was downloaded - check the console!</p>";
-			const imgs = json.message;
-			let html;
-			if (Array.isArray(imgs)) {
-				html = imgs.map(i => `<img src="${i}" alt="dog picture">`).join("");
+			document.querySelector("#output").innerHTML = "<p>Some JSON was downloaded - check the console!</p>";
+			 const quakeInfo = json.features;
+			let numQuakes;
+			if (Array.isArray(quakeInfo)) {
+		 		numQuakes = quakeInfo.length;
 			}
 			else {
-				html = `<img src="${imgs}" alt="dog picture">`;
+			 	numQuakes = 1;
 			}
-			document.querySelector("#output").innerHTML = json.status + "<p>Generated dog images!</p>" + html;
+			document.querySelector("#output").innerHTML = "Status: " + json.metadata.status + "<p>There have been " + numQuakes + " earthquakes so far this year</p>";
 			console.log("json = ",json);
 		}
 		xhr.onerror = e => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
