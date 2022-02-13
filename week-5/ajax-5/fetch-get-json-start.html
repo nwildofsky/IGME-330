@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title>XHR - Load JSON</title>
+	<style>
+		body{
+			font-family: sans-serif;
+		}
+	</style>
+
+</head>
+<body>
+	<h2>Fetch - Load JSON</h2>
+	
+	<hr>
+	<button id="my-button">Load Data</button>
+	<div id="output">Click button to load</div>
+	
+
+<script>
+	document.querySelector("#my-button").onclick = loadJsonFetch;
+
+	function loadJsonFetch() {
+		fetch("data/pet-names.json")
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			}
+
+			return response.text().then(text => {
+				throw text;
+			});
+		})
+		.then(json => {
+			console.log(json);
+
+			const dogNames = json["dognames"];
+			const catNames = json["catnames"];
+			const birdNames = json["birdnames"];
+
+			const dogHtml = `<ol>${dogNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+			const catHtml = `<ol>${catNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+			const birdHtml = `<ol>${birdNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+			
+			const html = `
+				<h3>Dog Names</h3>
+				${dogHtml}
+				<h3>Cat Names</h3>
+				${catHtml}
+				<h3>Bird Names</h3>
+				${birdHtml}
+			`;
+
+			document.querySelector("#output").innerHTML = html;
+		})
+		.catch(error => {
+			console.log(error);
+		});
+	}
+</script>
+</body>
+</html>
