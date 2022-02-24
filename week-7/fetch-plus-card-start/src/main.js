@@ -27,7 +27,7 @@ const dataLoaded = (json) => {
   const card = document.createElement('sw-card');
   card.character = character;
   card.callback = addToFavorites;
-  cardHolder.appendChild(card); 
+  cardHolder.appendChild(card);
 };
 
 searchButton.onclick = () => ajax.loadJsonFetch(url,dataLoaded);
