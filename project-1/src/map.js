@@ -6,11 +6,11 @@ export function initMap() {
     map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v10',
-        center: [0, 0],
+        center: [-74.5, 40],
         zoom: 1
     });
 
-    //map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new mapboxgl.NavigationControl());
 
     // 3D Building layer
     // map.on('load', () => {
@@ -66,10 +66,14 @@ export function initMap() {
 export function addMarker(coordinates, className) {
     let el = document.createElement('div');
     el.className = className;
+    el.dataset.selected = 'false';
+    el.dataset.alertLevel = 'none';
 
     new mapboxgl.Marker(el)
     .setLngLat(coordinates)
     .addTo(map);
+
+    return el;
 }
 
 // export function addMarkersToMap() {
@@ -80,7 +84,7 @@ export function addMarker(coordinates, className) {
 // }
 
 export function flyTo(center = [0, 0]) {
-    map.flyTo({ center: center});
+    map.flyTo({center: center});
 }
 
 export function setZoomLevel(value = 0) {

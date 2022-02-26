@@ -1,5 +1,6 @@
 import * as map from "./map.js"
 import * as ajax from "./ajax.js"
+import * as utils from "./utils.js"
 
 let status;
 let count;
@@ -22,26 +23,28 @@ function loadQuakes(json) {
     for (let earthquake of geoJson) {
         const coordinates = [earthquake.geometry.coordinates[0], earthquake.geometry.coordinates[1]];
         const type = earthquake.properties.type;
-        map.addMarker(coordinates, type);
+        const marker = map.addMarker(coordinates, type);
 
         const item = document.createElement('list-item');
-        item.magnitude = earthquake.properties.mag;
+        item.magnitude = earthquake.properties.mag.toFixed(2);
         item.location = earthquake.properties.place;
-        item.time = earthquake.properties.time;
-        item.depth = earthquake.geometry.coordinates[2];
+        const dateTime = utils.epochToDate(earthquake.properties.time);
+        item.time = dateTime;
+        item.depth = earthquake.geometry.coordinates[2].toFixed(2) + 'km';
         item.onclick = () => {
+            map.setZoomLevel(7);
             map.flyTo(coordinates);
-            map.setZoomLevel(3);
+            document.querySelectorAll(".earthquake").forEach(m => m.dataset.selected = 'false');
+            marker.dataset.selected = 'true';
         }
 
-        document.querySelector('#list').appendChild(item);
+        document.querySelector('#quake-list').appendChild(item);
     }
 }
 
 function queryPast6Hours() {
     const today = new Date();
-    let dateTime = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()
-                   +'T'+(today.getHours()-6)+':'+today.getMinutes()+':'+today.getSeconds();
+    const dateTime = utils.getDateTimeString(today, 0,0,0,1);
     const url = baseURL + '&starttime=' + dateTime;
     return url;
 }

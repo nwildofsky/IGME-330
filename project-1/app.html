@@ -11,6 +11,8 @@
   <!-- Mapbox -->
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/f7be11d31e.js" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="./styles/default-styles.css" type="text/css">
   <link rel="stylesheet" href="./styles/map-styles" type="text/css">
@@ -20,7 +22,106 @@
   <custom-nav></custom-nav>
   <div id="map"></div>
 
-  <div class="section">
+  <div id="search-list">
+    <div class="box">
+      <div id="search-options">
+        <h2 class="title is-4">Search Earthquakes</h2>
+        <div class="form-row">
+          <form>
+            <label for="start-time">Occurred After</label>
+            <input class="input is-small" type="date" id="start-time">
+          </form>
+          <form>
+            <label for="end-time">Occurred Before</label>
+            <input class="input is-small" type="date" id="end-time">
+          </form>
+        </div>
+        <div class="form-row">
+          <form>
+            <label for="min-mag">Min Mag.</label>
+            <input class="input is-small" type="number" id="min-mag" min="0" max="10" step="0.5" value="2.5">
+          </form>
+          <form>
+            <label for="max-mag">Max Mag.</label>
+            <input class="input is-small" type="number" id="max-mag" min="0" max="10" step="0.5" value="10">
+          </form>
+          <form>
+            <label for="min-depth">Min Depth</label>
+            <input class="input is-small" type="number" id="min-depth" min="0" max="1000" step="50" value="0">
+          </form>
+          <form>
+            <label for="max-dpeth">Max Depth</label>
+            <input class="input is-small" type="number" id="max-depth" min="0" max="1000" step="50" value="1000">
+          </form>
+        </div>
+        <div class="form-row">
+          <form>
+            <label for="focus-location">Focus Location</label>
+            <div class="select is-small">
+              <select id="focus-location">
+                <option selected>Choose a Location</option>
+                <option>Japan</option>
+                <option>Nepal</option>
+                <option>India</option>
+                <option>Ecuador</option>
+                <option>Philippines</option>
+                <option>Pakistan</option>
+                <option>El Salvador</option>
+                <option>Mexico</option>
+                <option>Turkey</option>
+                <option>Indonesia</option>
+                <option>Puerto Rico</option>
+                <option>United States</option>
+                <option>Alaska</option>
+                <option>World</option>
+              </select>
+            </div>
+          </form>
+          <form>
+            <label for="sort-order">Sort By</label>
+            <div class="select is-small">
+              <select id="sort-order">
+                <option selected>Newest First</option>
+                <option>Oldest First</option>
+                <option>Largest Magnitude First</option>
+                <option>Smallest Magnitude First</option>
+              </select>
+            </div>
+          </form>
+          <form>
+            <label for="query-limit">Limit</label>
+            <div class="select is-small">
+              <select id="query-limit">
+                <option>10</option>
+                <option>20</option>
+                <option>30</option>
+                <option>40</option>
+                <option selected>50</option>
+                <option>60</option>
+                <option>70</option>
+                <option>80</option>
+                <option>90</option>
+                <option>100</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="form-row">
+          <button class="button is-dark" id="search-btn">Search</button>
+          <p class="has-text-grey ml-5">Showing 50 Quakes from search results</p>
+        </div>
+        <hr>
+        <div class="collapse">
+          <i class="fa-solid fa-angle-up fa-lg"></i>
+        </div>
+      </div>
+      <div id="quake-list">
+        <list-item></list-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="section">
     <div class="columns">
       <div class="column is-4" id="search-list">
         <div class="box">
@@ -169,7 +270,7 @@
               </div>
               <div class="is-flex">
               <button class="button is-dark" id="search-btn">Search</button>
-              <p class="ml-6">Limit: </p>
+              <label for="limit">Limit:</label>
               <span class="select">
                 <select id="limit">
                   <option value="10">10</option>
@@ -191,11 +292,11 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
 
-    <script type="module" src="./src/init.js"></script>
-    <script type="module" src="./src/app.js"></script>
+  <script type="module" src="./src/init.js"></script>
+  <script type="module" src="./src/app.js"></script>
 </body>
 
 </html>

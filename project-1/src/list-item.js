@@ -3,22 +3,38 @@ template.innerHTML = `
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
 <style>
 .level {
-  margin: 0 1rem 1.5rem;
+  margin: 0 0 1.5rem;
   cursor: pointer;
   justify-content: center;
+  width: 100%;
+  flex: 1;
+}
+.level-item {
+  flex-direction: column;
+  min-width: 50px;
+  max-width: 250px;
+}
+.level-item .text-overflow {
+  display: inline-block;
+  width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
-<div class="level" id="item">
+<div class="level is-mobile" id="item">
   <div class="level-item">
-    <p id="magnitude" class="title is-4">5.6</p>
+    <p class="heading">Magnitude</p>
+    <p id="magnitude" class="subtitle is-4">5.6</p>
   </div>
   <div class="level-item">
     <div>
-      <p id="location" class="title is-5">S of Central Alaska</p>
-      <p id="time" class="heading is-6">123456789</p>
+      <p id="location" class="title is-5 text-overflow">S of Central Alaskaaaaaaaaaaaaaaaaaaaaa</p>
+      <p id="time" class="is-size-6 text-overflow">12345678900000000000000000000000000000</p>
     </div>
   </div>
   <div class="level-item">
+    <p class="heading">Depth</p>
     <p id="depth">10km</p>
   </div>
 </div>
