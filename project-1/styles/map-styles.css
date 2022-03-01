@@ -4,7 +4,7 @@ html {
 
 #map {
     position: absolute;
-    top: 6%;
+    top: 52px;
     bottom: 0;
     width: calc(100% - 440px);
     height: 94%;
