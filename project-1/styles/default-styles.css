@@ -31,3 +31,55 @@ body {
 .is-dark-blue .subtitle {
     color: white;
 }
+.is-blue {
+    background-color: rgb(53, 64, 216);
+    color: white;
+}
+.is-blue .title {
+    color: white;
+}
+.is-blue .subtitle {
+    color: white;
+}
+
+#favorites-container {
+    margin-bottom: 1.5rem;
+}
+#favorites-container .form-row {
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    align-items: center;
+}
+#favorites-container .form-row form {
+    margin: 0 .5rem;
+    display: flex;
+    align-items: center;
+}
+#favorites-container .form-row form label {
+    margin-right: .4rem;
+}
+#favorites-container .form-row button {
+    margin: 0 .5rem;
+}
+.select select {
+    font-family: 'Outfit', sans-serif;
+}
+#favorites-container hr {
+    margin: .5rem auto 1.5rem;
+}
+#favorite-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    height: calc(70%);
+    overflow-y: auto;
+}
+#favorite-list > * {
+    margin: 0 .7rem .7rem;
+}
+
+.page-header {
+    margin-top: 1.5rem;
+}

@@ -24,7 +24,12 @@ export function getDateTimeString(date, minusYears=0, minusMonths=0, minusDays=0
         if (day <= minusDays) {
             day -= minusDays;
             month--;
-            day = 30 + day;
+            if (month == '02') {
+                day = 28 + day;
+            }
+            else {
+                day = 30 + day;
+            }
         }
         else {
             day -= minusDays;

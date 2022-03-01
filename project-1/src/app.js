@@ -135,14 +135,14 @@ function favoriteQuake(earthquake, favoriteButton) {
     ls.addFavorite(earthquake);
     favoriteButton.innerHTML = 'Unfavorite';
     favoriteButton.onclick = null;
-    favoriteButton.onclick = () => unfavoriteQuake();
+    favoriteButton.onclick = () => unfavoriteQuake(earthquake, favoriteButton);
 }
 
 function unfavoriteQuake(earthquake, favoriteButton) {
     ls.removeFavorite(earthquake.id);
     favoriteButton.innerHTML = 'Favorite';
     favoriteButton.onclick = null;
-    favoriteButton.onclick = () => favoriteQuake();
+    favoriteButton.onclick = () => favoriteQuake(earthquake, favoriteButton);
 }
 
 function queryPast6Hours() {

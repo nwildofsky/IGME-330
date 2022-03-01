@@ -11,10 +11,10 @@
   <link rel="stylesheet" href="./styles/default-styles.css" type="text/css">
 </head>
 
-<body>
+<body class="is-blue">
   <app-navbar></app-navbar>
 
-  <section class="hero is-fullheight-with-navbar is-link">
+  <!-- <section class="hero is-fullheight-with-navbar is-link">
     <div class="hero-body">
       <div class="container">
         <p class="title is-size-2 has-text-weight-medium">Favorites Page</p>
@@ -24,12 +24,57 @@
         </p>
       </div>
     </div>
-  </section>
+  </section> -->
+
+  <div class="container">
+    <div id="favorites-container">
+      <h1 class="title page-header">Favorited Quakes</h1>
+      <div class="box">
+        <div id="options">
+          <div class="form-row">
+            <!-- <form>
+              <label for="sort-order">Sort By</label>
+              <div class="select is-small">
+                <select id="sort-order">
+                  <option selected>Newest First</option>
+                  <option>Oldest First</option>
+                  <option>Largest Magnitude First</option>
+                  <option>Smallest Magnitude First</option>
+                </select>
+              </div>
+            </form>
+            <form>
+              <label for="filter-by">Filter By Magnitude</label>
+              <div class="select is-small">
+                <select id="filter-by">
+                  <option selected>No Filter</option>
+                  <option>2+ mag</option>
+                  <option>3+ mag</option>
+                  <option>4+ mag</option>
+                  <option>5+ mag</option>
+                  <option>6+ mag</option>
+                  <option>7+ mag</option>
+                  <option>8+ mag</option>
+                  <option>9+ mag</option>
+                </select>
+              </div>
+            </form> -->
+
+            <button class="button is-warning" id="fav-clear">Clear All Favorites</button>
+            <button class="button is-danger" id="ls-clear">Clear All App Preferences</button>
+          </div>
+        </div>
+        <hr>
+        <div id="favorite-list"></div>
+      </div>
+    </div>
+  </div>
 
   <app-footer></app-footer>
 
-  
+
   <script type="module" src="./src/init.js"></script>
+  <script type="module" src="./src/favorites.js"></script>
 </body>
 
 </html>
