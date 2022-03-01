@@ -3,15 +3,16 @@ template.innerHTML = `
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
 <style>
 .level {
-  margin: 0 0 1.5rem;
   cursor: pointer;
-  justify-content: center;
   width: 100%;
-  flex: 1;
+  padding: 1.25rem;
+}
+.level:hover {
+  background-color: #eaeaea;
 }
 .level-item {
   flex-direction: column;
-  min-width: 50px;
+  min-width: 20px;
   max-width: 250px;
 }
 .level-item .text-overflow {
@@ -55,6 +56,7 @@ class ListItem extends HTMLElement {
     this._location = 'S of Central Alaska';
     this._time = '123456789';
     this._depth = '10km';
+    this._id = '100';
   }
 
   render() {
@@ -98,6 +100,14 @@ class ListItem extends HTMLElement {
   set depth(val) {
     this._depth = val;
     this.render();
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  set id(val) {
+    this._id = val;
   }
 }
 

@@ -1,7 +1,14 @@
-let map;
-let geoJson;
+import * as utils from "./utils.js";
+import * as app from "./app.js";
 
-export function initMap() {
+let map;
+let selectedQuake = {
+    'type': 'FeatureCollection',
+    'features': []
+};
+let allQuakes;
+
+export function initMap(geoJson) {
     mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJmbGFyZSIsImEiOiJja3pscTBrdWIxbXozMnBxaHJuM3Z6amltIn0.re0L-Mhcb62AJkoEchtunw';
     map = new mapboxgl.Map({
         container: 'map',
@@ -11,56 +18,105 @@ export function initMap() {
     });
 
     map.addControl(new mapboxgl.NavigationControl());
+    allQuakes = geoJson;
 
-    // 3D Building layer
-    // map.on('load', () => {
-    //     // Insert the layer beneath any symbol layer.
-    //     const layers = map.getStyle().layers;
-    //     const labelLayerId = layers.find(
-    //         (layer) => layer.type === 'symbol' && layer.layout['text-field']
-    //     ).id;
+    map.on('load', () => {
+        // Add an image to use as a custom marker
+        map.loadImage(
+            './images/qt_marker_center.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('custom-marker', image);
+                map.addSource('quakes', {
+                    type: 'geojson',
+                    data: geoJson
+                });
 
-    //     // The 'building' layer in the Mapbox Streets
-    //     // vector tileset contains building height data
-    //     // from OpenStreetMap.
-    //     map.addLayer(
-    //         {
-    //             'id': 'add-3d-buildings',
-    //             'source': 'composite',
-    //             'source-layer': 'building',
-    //             'filter': ['==', 'extrude', 'true'],
-    //             'type': 'fill-extrusion',
-    //             'minzoom': 15,
-    //             'paint': {
-    //                 'fill-extrusion-color': '#aaa',
+                map.addLayer({
+                    'id': 'quake-circles',
+                    'type': 'symbol',
+                    'source': 'quakes',
+                    'minzoom': 0,
+                    'layout': {
+                        'icon-image': 'custom-marker',
+                        'icon-allow-overlap': true,
+                        'icon-size': {
+                            property: 'mag',
+                            stops: [
+                                [0, .1],
+                                [10, .5]
+                            ]
+                        }
+                    }
+                });
+                // map.getSource('quakes').setData(geoJson);
+            }
+        );
+        map.loadImage(
+            './images/qt_marker_center_selected.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('selected-marker', image);
 
-    //                 // Use an 'interpolate' expression to
-    //                 // add a smooth transition effect to
-    //                 // the buildings as the user zooms in.
-    //                 'fill-extrusion-height': [
-    //                     'interpolate',
-    //                     ['linear'],
-    //                     ['zoom'],
-    //                     15,
-    //                     0,
-    //                     15.05,
-    //                     ['get', 'height']
-    //                 ],
-    //                 'fill-extrusion-base': [
-    //                     'interpolate',
-    //                     ['linear'],
-    //                     ['zoom'],
-    //                     15,
-    //                     0,
-    //                     15.05,
-    //                     ['get', 'min_height']
-    //                 ],
-    //                 'fill-extrusion-opacity': 0.6
-    //             }
-    //         },
-    //         labelLayerId
-    //     );
-    // });
+                map.on('click', 'quake-circles', (e) => {
+                    let idArray = e.features[0].properties.ids.split(',');
+                    let quake;
+                    let i = 1;
+                    while (!quake) {
+                        const id = idArray[i];
+                        quake = utils.getQuakeInfoFromJson(allQuakes, id);
+                        i++;
+                    }
+
+                    const coordinates = [quake.geometry.coordinates[0], quake.geometry.coordinates[1]];
+                    selectedQuake.features[0] = e.features[0];
+                    selectedQuake.features[0].geometry.coordinates = coordinates;
+                    selectSymbol(selectedQuake);
+                    app.selectQuake(quake);
+                });
+
+                map.on('mouseenter', 'quake-circles', (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                map.on('mouseleave', 'quake-circles', (e) => {
+                    map.getCanvas().style.cursor = '';
+                });
+            }
+        );
+    });
+}
+
+export function selectSymbol(selectedQuake) {
+    if (map.getLayer('quake-selected')) map.removeLayer('quake-selected');
+    if (map.getSource('clicked')) map.removeSource('clicked');
+
+    map.addSource('clicked', {
+        type: 'geojson',
+        data: selectedQuake
+    });
+    map.addLayer({
+        'id': 'quake-selected',
+        'type': 'symbol',
+        'source': 'clicked',
+        'layout': {
+            'icon-image': 'selected-marker',
+            'icon-size': {
+                property: 'mag',
+                stops: [
+                    [0, .1],
+                    [10, .5]
+                ]
+            }
+        }
+    });
+
+    flyTo(selectedQuake.features[0].geometry.coordinates);
+}
+
+export function deselectSymbol() {
+    if (map.getLayer('quake-selected')) map.removeLayer('quake-selected');
+    if (map.getSource('clicked')) map.removeSource('clicked');
 }
 
 export function addMarker(coordinates, className) {
@@ -70,10 +126,15 @@ export function addMarker(coordinates, className) {
     el.dataset.alertLevel = 'none';
 
     new mapboxgl.Marker(el)
-    .setLngLat(coordinates)
-    .addTo(map);
+        .setLngLat(coordinates)
+        .addTo(map);
 
     return el;
+}
+
+export function updateSymbols(geoJson) {
+    map.getSource('quakes').setData(geoJson);
+    allQuakes = geoJson;
 }
 
 // export function addMarkersToMap() {
@@ -84,7 +145,7 @@ export function addMarker(coordinates, className) {
 // }
 
 export function flyTo(center = [0, 0]) {
-    map.flyTo({center: center});
+    map.flyTo({ center: center });
 }
 
 export function setZoomLevel(value = 0) {

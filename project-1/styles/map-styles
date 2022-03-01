@@ -1,9 +1,14 @@
+html {
+    overflow: hidden;
+}
+
 #map {
     position: absolute;
     top: 6%;
     bottom: 0;
-    width: 100%;
+    width: calc(100% - 440px);
     height: 94%;
+    right: 0;
 }
 
 .earthquake {
@@ -18,12 +23,14 @@
 #search-list {
     position: relative;
     width: 440px;
+    height: 100%;
 }
 #search-list .box {
     padding: 0 0 1.25rem;
 }
 #search-options {
     padding: 1.25rem 1.25rem 0 1.25rem;
+    height: 365px;
 }
 #search-options .title {
     margin-bottom: 1rem;
@@ -63,7 +70,7 @@ hr {
 }
 
 #quake-list {
-    height: 40%;
+    height: calc(90% - 365px);
     overflow-y: auto;
     overflow-x: hidden;
 }

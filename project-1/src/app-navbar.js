@@ -44,7 +44,7 @@ template.innerHTML = `
   </nav>
 `;
 
-class CustomNav extends HTMLElement {
+class AppNavbar extends HTMLElement {
     constructor() {
         super();
 
@@ -80,4 +80,4 @@ class CustomNav extends HTMLElement {
     }
 }
 
-customElements.define("custom-nav", CustomNav);
+customElements.define("app-navbar", AppNavbar);

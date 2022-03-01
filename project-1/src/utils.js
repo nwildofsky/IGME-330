@@ -59,3 +59,72 @@ export function epochToDate(epochValue) {
     dateString += ' (UTC)';
     return dateString;
 }
+
+export function getQuakeInfoFromJson(geoJson, quakeID) {
+    for (let quake of geoJson.features) {
+        if (quake.id == quakeID) {
+            return quake;
+        }
+    }
+}
+
+export function getSortQueryCode(sortby) {
+    switch(sortby) {
+        case 'Newest First':
+            return 'time';
+            break;
+        case 'Oldest First':
+            return 'time-asc';
+            break;
+        case 'Largest Magnitude First':
+            return 'magnitude';
+            break;
+        case 'Smallest Magnitude First':
+            return 'magnitude-asc';
+            break;
+        default:
+            return 'time';
+    }
+}
+
+export function getCardinalCoords(latitude, longitude) {
+    let lat = latitude.toFixed(4);
+    let lng = longitude.toFixed(4);
+
+    if (lng > 0) {
+        lng = Math.abs(lng) + '&degN';
+    }
+    else {
+        lng = Math.abs(lng) + '&degS';
+    }
+
+    if ((lat >= 0 && lat < 181) || lat < -180) {
+        lat = Math.abs(lat) + '&degE';
+    }
+    else {
+        lat = Math.abs(lat) + '&degW';
+    }
+
+    return `${lng} ${lat}`;
+}
+
+// https://italonascimento.github.io/applying-a-timeout-to-your-promises/
+// Utility function to stop long promises from running in the background
+// for multiple seconds.
+export function promiseTimeout(msLimit, promise) {
+    // Create a promise that rejects in <ms> miliseconds
+    let timeout = new Promise((resolve, reject) => {
+        let id = setTimeout(() => {
+            clearTimeout(id);
+            reject('Timed out in ' + msLimit + 'ms.');
+        }, msLimit);
+    })
+
+    // Returns a race between our timeout and the passed in promise
+    // If fetching for earthquakes wins race, the api was fast enough
+    // If timeout wins the api took too long and should be stopped
+    return Promise.race([
+        promise,
+        timeout
+    ]);
+}

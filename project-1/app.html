@@ -19,7 +19,7 @@
 </head>
 
 <body>
-  <custom-nav></custom-nav>
+  <app-navbar></app-navbar>
   <div id="map"></div>
 
   <div id="search-list">
@@ -39,7 +39,7 @@
         <div class="form-row">
           <form>
             <label for="min-mag">Min Mag.</label>
-            <input class="input is-small" type="number" id="min-mag" min="0" max="10" step="0.5" value="2.5">
+            <input class="input is-small" type="number" id="min-mag" min="0" max="10" step="0.5" value="0">
           </form>
           <form>
             <label for="max-mag">Max Mag.</label>
@@ -47,11 +47,11 @@
           </form>
           <form>
             <label for="min-depth">Min Depth</label>
-            <input class="input is-small" type="number" id="min-depth" min="0" max="1000" step="50" value="0">
+            <input class="input is-small" type="number" id="min-depth" min="-100" max="1000" step="50" value="-100">
           </form>
           <form>
             <label for="max-dpeth">Max Depth</label>
-            <input class="input is-small" type="number" id="max-depth" min="0" max="1000" step="50" value="1000">
+            <input class="input is-small" type="number" id="max-depth" min="-100" max="1000" step="50" value="1000">
           </form>
         </div>
         <div class="form-row">
@@ -61,18 +61,14 @@
               <select id="focus-location">
                 <option selected>Choose a Location</option>
                 <option>Japan</option>
-                <option>Nepal</option>
                 <option>India</option>
-                <option>Ecuador</option>
-                <option>Philippines</option>
-                <option>Pakistan</option>
-                <option>El Salvador</option>
-                <option>Mexico</option>
-                <option>Turkey</option>
                 <option>Indonesia</option>
                 <option>Puerto Rico</option>
                 <option>United States</option>
                 <option>Alaska</option>
+                <option>Central America</option>
+                <option>Ecuador</option>
+                <option>Turkey</option>
                 <option>World</option>
               </select>
             </div>
@@ -108,7 +104,7 @@
         </div>
         <div class="form-row">
           <button class="button is-dark" id="search-btn">Search</button>
-          <p class="has-text-grey ml-5">Showing 50 Quakes from search results</p>
+          <p class="has-text-grey ml-5" id="result-text">Showing 50 Quakes from search results</p>
         </div>
         <hr>
         <div class="collapse">
@@ -120,6 +116,9 @@
       </div>
     </div>
   </div>
+
+  <div id="selected-quake"></div>
+
 
   <!-- <div class="section">
     <div class="columns">

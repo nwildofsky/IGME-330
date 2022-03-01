@@ -5,7 +5,6 @@ footer{
     color: white;
     background-color: black;
     padding: .5rem;
-    margin-top: .5rem;
 }
 </style>
 <footer>
@@ -13,7 +12,7 @@ footer{
 </footer>
 `;
 
-class CustomFooter extends HTMLElement {
+class AppFooter extends HTMLElement {
     constructor() {
         super();
 
@@ -22,4 +21,4 @@ class CustomFooter extends HTMLElement {
     }
 }
 
-customElements.define("custom-footer", CustomFooter);
+customElements.define("app-footer", AppFooter);
