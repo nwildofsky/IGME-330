@@ -5,10 +5,11 @@ footer{
     color: white;
     background-color: black;
     padding: .5rem;
+    margin-top: auto;
 }
 </style>
 <footer>
-&copy; 2022 Nathan Wildofsky
+    &copy; 2022 Nathan Wildofsky
 </footer>
 `;
 
