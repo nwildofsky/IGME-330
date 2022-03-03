@@ -4,10 +4,10 @@ html {
 
 #map {
     position: absolute;
-    top: 6%;
+    top: 52px;
     bottom: 0;
     width: calc(100% - 440px);
-    height: 94%;
+    height: calc(100% - 52px);
     right: 0;
 }
 
@@ -23,7 +23,7 @@ html {
 #search-list {
     position: relative;
     width: 440px;
-    height: 100%;
+    height: calc(100% - 52px);
 }
 #search-list .box {
     padding: 0 0 1.25rem;
@@ -70,7 +70,7 @@ hr {
 }
 
 #quake-list {
-    height: calc(90% - 365px);
+    height: calc(100% - 365px);
     overflow-y: auto;
     overflow-x: hidden;
 }
