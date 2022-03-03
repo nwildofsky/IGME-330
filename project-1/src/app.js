@@ -89,6 +89,7 @@ function loadQuakes(json) {
     quakeList.innerHTML = '';
     for (let earthquake of json.features) {
         const item = document.createElement('list-item');
+        quakeList.appendChild(item);
         item.magnitude = earthquake.properties.mag.toFixed(1);
         item.location = earthquake.properties.place;
         const dateTime = utils.epochToDate(earthquake.properties.time);
@@ -100,14 +101,13 @@ function loadQuakes(json) {
             map.selectSymbol(selectedQuake);
             selectQuake(earthquake);
         }
-
-        quakeList.appendChild(item);
     }
 }
 
 export function selectQuake(earthquake) {
     document.querySelector('#selected-quake').innerHTML = '';
     const popup = document.createElement('map-quake-card');
+    document.querySelector('#selected-quake').appendChild(popup);
     popup.place = earthquake.properties.place;
     popup.type = earthquake.properties.type;
     popup.magnitude = earthquake.properties.mag.toFixed(1);
@@ -123,8 +123,6 @@ export function selectQuake(earthquake) {
         popup.favoriteButton.innerHTML = 'Unfavorite';
         popup.favoriteButton.onclick = () => unfavoriteQuake(earthquake, popup.favoriteButton);
     }
-
-    document.querySelector('#selected-quake').appendChild(popup);
 }
 
 function deselectQuake() {

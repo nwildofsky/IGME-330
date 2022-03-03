@@ -8,8 +8,9 @@ function init() {
     else {
         document.querySelector('#favorite-list').innerHTML = '';
         const favEmpty = document.createElement('p');
-        favEmpty.innerHTML = 'No favorited quakes found. To favorite a quake go to the app page, select a quake and click favorite';
         document.querySelector('#favorite-list').appendChild(favEmpty);
+        favEmpty.innerHTML = 'No favorited quakes found. To favorite a quake go to the app page, select a quake and click favorite';
+
     }
 
     document.querySelector('#fav-clear').onclick = () => clearFavorites();
@@ -24,6 +25,7 @@ function loadFavorites() {
     for (let fav of favorites) {
         if (fav) {
             const card = document.createElement('fav-quake-card');
+            document.querySelector('#favorite-list').appendChild(card);
             card.place = fav.properties.place;
             card.type = fav.properties.type;
             card.magnitude = fav.properties.mag.toFixed(1);
@@ -33,8 +35,6 @@ function loadFavorites() {
             card.depth = fav.geometry.coordinates[2].toFixed(1) + 'km';
             card.link = fav.properties.url;
             card.favoriteButton.onclick = () => unfavoriteQuake(fav, card);
-
-            document.querySelector('#favorite-list').appendChild(card);
         }
     }
 }

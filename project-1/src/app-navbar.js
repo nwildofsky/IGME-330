@@ -45,39 +45,39 @@ template.innerHTML = `
 `;
 
 class AppNavbar extends HTMLElement {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+  }
 
-        // Mobile Menu
-        this.burgerIcon = this.shadowRoot.querySelector("#burger");
-        this.navbarMenu = this.shadowRoot.querySelector("#nav-links");
-        this.navLinks = this.shadowRoot.querySelectorAll("#nav-links a");
+  boldCurrentNav() {
+    let url = window.location.href;
+    url = url.split('/');
+    const page = url[url.length - 1];
+    for (let link of this.navLinks) {
+      const linkURL = link.href.split('/');
+      const linkPage = linkURL[linkURL.length - 1];
+      if (page == linkPage) {
+        link.style.fontWeight = 650;
+      }
     }
+  }
 
-    boldCurrentNav() {
-        let url = window.location.href;
-        url = url.split('/');
-        const page = url[url.length - 1];
-        for (let link of this.navLinks) {
-            const linkURL = link.href.split('/');
-            const linkPage = linkURL[linkURL.length - 1];
-            if (page == linkPage) {
-                link.style.fontWeight = 650;
-            }
-        }
-    }
+  connectedCallback() {
+    // Mobile Menu
+    this.burgerIcon = this.shadowRoot.querySelector("#burger");
+    this.navbarMenu = this.shadowRoot.querySelector("#nav-links");
+    this.navLinks = this.shadowRoot.querySelectorAll("#nav-links a");
 
-    connectedCallback() {
-        this.burgerIcon.onclick = () => this.navbarMenu.classList.toggle('is-active');
-        this.boldCurrentNav();
-    }
+    this.burgerIcon.onclick = () => this.navbarMenu.classList.toggle('is-active');
+    this.boldCurrentNav();
+  }
 
-    disconnectedCallback() {
-        this.burgerIcon.onclick = null;
-    }
+  disconnectedCallback() {
+    this.burgerIcon.onclick = null;
+  }
 }
 
 customElements.define("app-navbar", AppNavbar);
