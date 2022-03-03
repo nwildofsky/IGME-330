@@ -9,10 +9,11 @@ template.innerHTML = `
 }
 
 #map-quake-card {
-  position: relative;
-  bottom: 350px;
+  position: absolute;
+  bottom: 10px;
   left: 450px;
   width: 330px;
+  z-index: 2;
 }
 
 .horizontal-labels {

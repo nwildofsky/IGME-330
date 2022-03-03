@@ -61,6 +61,7 @@ function useLastQuery() {
         document.querySelector('#min-depth').value = searchParams[4];
         document.querySelector('#max-depth').value = searchParams[5];
         document.querySelector('#focus-location').value = searchParams[6];
+        focusOn(searchParams[6]);
         document.querySelector('#sort-order').value = searchParams[7];
         document.querySelector('#query-limit').value = searchParams[8];
     }
@@ -68,7 +69,7 @@ function useLastQuery() {
 
 function queryTimedOut() {
     document.querySelector('#search-btn').classList.remove('is-loading');
-    document.querySelector('#result-text').innerHTML = `Search query was too broad a range of quakes`;
+    document.querySelector('#result-text').innerHTML = `Search timed out. Try limiting query more`;
     document.querySelector('#result-text').classList.remove('has-text-grey');
     document.querySelector('#result-text').classList.add('has-text-danger');
 }
@@ -184,7 +185,26 @@ function getSearchParams() {
     url += `&orderby=${utils.getSortQueryCode(sort)}`;
     url += `&limit=${limit}`;
 
-    switch (focusLoc) {
+    url += focusOn(focusLoc);
+
+    document.querySelector('#search-btn').classList.add('is-loading');
+    document.querySelector('#result-text').innerHTML = '...';
+    document.querySelector('#result-text').classList.remove('has-text-danger');
+    document.querySelector('#result-text').classList.add('has-text-grey');
+
+    deselectQuake();
+    ajax.getQuakeData(url, refreshQuakeMap, queryTimedOut, queryFailed);
+    ls.clearSearchParams();
+    [startDate, endDate, minMag, maxMag, minDepth, maxDepth, focusLoc, sort, limit]
+        .forEach(input => {
+            ls.addSearchParams(input);
+        })
+}
+
+function focusOn(location) {
+    let url = '';
+
+    switch (location) {
         case 'Japan':
             url += '&minlongitude=115';
             url += '&maxlongitude=165';
@@ -271,16 +291,5 @@ function getSearchParams() {
         default:
     }
 
-    document.querySelector('#search-btn').classList.add('is-loading');
-    document.querySelector('#result-text').innerHTML = '...';
-    document.querySelector('#result-text').classList.remove('has-text-danger');
-    document.querySelector('#result-text').classList.add('has-text-grey');
-
-    deselectQuake();
-    ajax.getQuakeData(url, refreshQuakeMap, queryTimedOut, queryFailed);
-    ls.clearSearchParams();
-    [startDate, endDate, minMag, maxMag, minDepth, maxDepth, focusLoc, sort, limit]
-        .forEach(input => {
-            ls.addSearchParams(input);
-        })
+    return url;
 }

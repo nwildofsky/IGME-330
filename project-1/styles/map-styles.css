@@ -23,7 +23,7 @@ html {
 #search-list {
     position: relative;
     width: 440px;
-    height: calc(100% - 52px);
+    height: calc(100% - 76px);
 }
 #search-list .box {
     padding: 0 0 1.25rem;

@@ -19,7 +19,7 @@ export async function getQuakeData(url, onDataLoaded, onFetchTimedOut, onFetchFa
     //     onFetchFailed();
     // }
 
-    let response = promiseTimeout(10000, fetch(url));
+    let response = promiseTimeout(13000, fetch(url));
 
     response
     .then(data => {
@@ -37,7 +37,7 @@ export async function getQuakeData(url, onDataLoaded, onFetchTimedOut, onFetchFa
     })
     .catch(error => {
         console.log(`Ajax promise failed with error = ${error}`);
-        if (error == 'Timed out in 10000ms.') {
+        if (error == 'Timed out in 13000ms.') {
             onFetchTimedOut();
         }
         else {
