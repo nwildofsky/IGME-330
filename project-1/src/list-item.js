@@ -22,6 +22,13 @@ template.innerHTML = `
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.selected {
+  background-color: #2249d6;
+  color: white;
+}
+.selected .title, .selected .subtitle, .selected .heading {
+  color: white;
+}
 </style>
 <div class="level is-mobile" id="item">
   <div class="level-item">
