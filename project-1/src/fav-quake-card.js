@@ -73,13 +73,6 @@ class FavQuakeCard extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    this.placeHTML = this.shadowRoot.querySelector('#place');
-    this.typeHTML = this.shadowRoot.querySelector('#type');
-    this.magHTML = this.shadowRoot.querySelector('#magnitude');
-    this.locHTML = this.shadowRoot.querySelector('#location');
-    this.timHTML = this.shadowRoot.querySelector('#time');
-    this.depHTML = this.shadowRoot.querySelector('#depth');
-    this.linkHTML = this.shadowRoot.querySelector('#learn-more');
     this._place = 'S of Central Alaska';
     this._type = 'Earthquake';
     this._magnitude = '5.5';
@@ -87,6 +80,16 @@ class FavQuakeCard extends HTMLElement {
     this._time = '123456789';
     this._depth = '10km';
     this.link = 'https://';
+  }
+
+  connectedCallback() {
+    this.placeHTML = this.shadowRoot.querySelector('#place');
+    this.typeHTML = this.shadowRoot.querySelector('#type');
+    this.magHTML = this.shadowRoot.querySelector('#magnitude');
+    this.locHTML = this.shadowRoot.querySelector('#location');
+    this.timHTML = this.shadowRoot.querySelector('#time');
+    this.depHTML = this.shadowRoot.querySelector('#depth');
+    this.linkHTML = this.shadowRoot.querySelector('#learn-more');
     this.favoriteButton = this.shadowRoot.querySelector('#favorite-btn');
   }
 

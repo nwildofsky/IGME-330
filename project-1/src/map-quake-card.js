@@ -71,18 +71,21 @@ class MapQuakeCard extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    this.placeHTML = this.shadowRoot.querySelector('#place');
-    this.typeHTML = this.shadowRoot.querySelector('#type');
-    this.magHTML = this.shadowRoot.querySelector('#magnitude');
-    this.locHTML = this.shadowRoot.querySelector('#location');
-    this.timHTML = this.shadowRoot.querySelector('#time');
-    this.depHTML = this.shadowRoot.querySelector('#depth');
     this._place = 'S of Central Alaska';
     this._type = 'Earthquake';
     this._magnitude = '5.5';
     this._location = 'S of Central Alaska';
     this._time = '123456789';
     this._depth = '10km';
+  }
+
+  connectedCallback() {
+    this.placeHTML = this.shadowRoot.querySelector('#place');
+    this.typeHTML = this.shadowRoot.querySelector('#type');
+    this.magHTML = this.shadowRoot.querySelector('#magnitude');
+    this.locHTML = this.shadowRoot.querySelector('#location');
+    this.timHTML = this.shadowRoot.querySelector('#time');
+    this.depHTML = this.shadowRoot.querySelector('#depth');
     this.closeButton = this.shadowRoot.querySelector('#close-btn');
     this.favoriteButton = this.shadowRoot.querySelector('#favorite-btn');
   }

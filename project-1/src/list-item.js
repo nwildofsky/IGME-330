@@ -55,15 +55,18 @@ class ListItem extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    this.magHTML = this.shadowRoot.querySelector('#magnitude');
-    this.locHTML = this.shadowRoot.querySelector('#location');
-    this.timHTML = this.shadowRoot.querySelector('#time');
-    this.depHTML = this.shadowRoot.querySelector('#depth');
     this._magnitude = '5.5';
     this._location = 'S of Central Alaska';
     this._time = '123456789';
     this._depth = '10km';
     this._id = '100';
+  }
+
+  connectedCallback() {
+    this.magHTML = this.shadowRoot.querySelector('#magnitude');
+    this.locHTML = this.shadowRoot.querySelector('#location');
+    this.timHTML = this.shadowRoot.querySelector('#time');
+    this.depHTML = this.shadowRoot.querySelector('#depth');
   }
 
   render() {
