@@ -40,16 +40,12 @@ export function initMap(geoJson) {
                     'layout': {
                         'icon-image': 'custom-marker',
                         'icon-allow-overlap': true,
-                        'icon-size': {
-                            property: 'mag',
-                            stops: [
-                                [0, .1],
-                                [10, .5]
-                            ]
-                        }
+                        'icon-size': ['interpolate', ['linear'], ['zoom'],
+                            2, ['*', .0175, ['get', 'mag']],
+                            9, ['*', .0625, ['get', 'mag']]
+                        ]
                     }
                 });
-                // map.getSource('quakes').setData(geoJson);
             }
         );
         map.loadImage(
@@ -101,13 +97,10 @@ export function selectSymbol(selectedQuake) {
         'source': 'clicked',
         'layout': {
             'icon-image': 'selected-marker',
-            'icon-size': {
-                property: 'mag',
-                stops: [
-                    [0, .1],
-                    [10, .5]
-                ]
-            }
+            'icon-size': ['interpolate', ['linear'], ['zoom'],
+                2, ['*', .0175, ['get', 'mag']],
+                9, ['*', .0625, ['get', 'mag']]
+            ]
         }
     });
 
@@ -158,4 +151,24 @@ export function setPitchAndBearing(pitch = 0, bearing = 0) {
     // https://docs.mapbox.com/mapbox-gl-js/example/set-perspective/
     map.setPitch(pitch);
     map.setBearing(bearing);
+}
+
+export function fullscreenMap() {
+    const mapbox = document.querySelector('#map');
+    const mapCanvas = document.querySelector('.mapboxgl-canvas');
+    mapbox.style.width = '100%';
+    mapCanvas.style.width = '100%';
+    mapbox.ontransitionend = () => {
+        map.resize();
+    }
+}
+
+export function reduceMap() {
+    const mapbox = document.querySelector('#map');
+    const mapCanvas = document.querySelector('.mapboxgl-canvas');
+    mapbox.style.width = 'calc(100% - 440px)';
+    //mapCanvas.style.width = 'calc(100% - 440px)';
+    mapbox.ontransitionend = () => {
+        map.resize();
+    }
 }

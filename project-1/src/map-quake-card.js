@@ -14,6 +14,16 @@ template.innerHTML = `
   left: 450px;
   width: 330px;
   z-index: 2;
+  transition: all 300ms ease;
+}
+#map-quake-card.collapsed {
+  left: 20px;
+}
+@media screen and (max-width: 440px) {
+  #map-quake-card.collapsed {
+    left: 0px !important;
+    width: 100%;
+  }
 }
 
 .horizontal-labels {
@@ -88,6 +98,7 @@ class MapQuakeCard extends HTMLElement {
     this.depHTML = this.shadowRoot.querySelector('#depth');
     this.closeButton = this.shadowRoot.querySelector('#close-btn');
     this.favoriteButton = this.shadowRoot.querySelector('#favorite-btn');
+    this.div = this.shadowRoot.querySelector('#map-quake-card');
   }
 
   render() {

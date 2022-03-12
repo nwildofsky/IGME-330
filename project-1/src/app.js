@@ -10,6 +10,7 @@ let selectedQuake = {
     'type': 'FeatureCollection',
     'features': []
 };
+let searchCollapsed = false, listCollapsed = false;
 
 function init() {
     if (JSON.stringify(ls.getLastQuery()) === '{}') {
@@ -19,6 +20,19 @@ function init() {
         useLastQuery();
     }
     document.querySelector('#search-btn').onclick = getSearchParams;
+    document.querySelector('#collapse-search').onclick = collapseSearch;
+    document.querySelector('#collapse-list').onclick = collapseList;
+    document.querySelector('#search-options h2').onclick = collapseList;
+    document.querySelector('#reset-params').onclick = resetSearchParams;
+    if (window.innerWidth > 850) {
+        expandList();
+    }
+    else {
+        const searchPrompt = document.querySelector('#search-prompt');
+        searchPrompt.classList.add('list');
+        searchPrompt.style.visibility = 'visible';
+        searchPrompt.onclick = expandList;
+    }
 }
 
 init();
@@ -35,6 +49,9 @@ function refreshQuakeMap(json) {
     map.updateSymbols(json);
     document.querySelector('#search-btn').classList.remove('is-loading');
     document.querySelector('#result-text').innerHTML = `Showing ${count} Quakes from search results`;
+    if (window.innerWidth < 440) {
+        collapseList();
+    }
     ls.clearLastQuery();
     ls.addLastQuery(json);
 }
@@ -53,6 +70,10 @@ function useLastQuery() {
     document.querySelector('#end-time').value = currentDay;
     document.querySelector('#end-time').max = currentDay;
     const searchParams = ls.getSearchParams();
+    setSearchParams(searchParams);
+}
+
+function setSearchParams(searchParams) {
     if (searchParams.length > 0) {
         document.querySelector('#start-time').value = searchParams[0];
         document.querySelector('#end-time').value = searchParams[1];
@@ -65,6 +86,25 @@ function useLastQuery() {
         document.querySelector('#sort-order').value = searchParams[7];
         document.querySelector('#query-limit').value = searchParams[8];
     }
+}
+
+function resetSearchParams() {
+    ls.clearSearchParams();
+    const today = new Date();
+    const yesterday = utils.getDateTimeString(today, 0, 0, 1).split('T')[0];
+    const currentDay = utils.getDateTimeString(today).split('T')[0];
+    const defaultParams = [
+        yesterday,
+        currentDay,
+        '0',
+        '10',
+        '-100',
+        '1000',
+        'Choose a Location',
+        'Newest First',
+        '50'
+    ]
+    setSearchParams(defaultParams);
 }
 
 function queryTimedOut() {
@@ -95,17 +135,30 @@ function loadQuakes(json) {
         const dateTime = utils.epochToDate(earthquake.properties.time);
         item.time = dateTime;
         item.depth = earthquake.geometry.coordinates[2].toFixed(1) + 'km';
-        //item.id = earthquake.properties.id;
+        item.id = earthquake.id;
         item.onclick = () => {
             selectedQuake.features[0] = earthquake;
             map.selectSymbol(selectedQuake);
             selectQuake(earthquake);
+            item.div.classList.add('selected-item');
+            if (window.innerWidth < 440) {
+                collapseList();
+            }
         }
     }
 }
 
 export function selectQuake(earthquake) {
     document.querySelector('#selected-quake').innerHTML = '';
+    const listedQuakes = document.querySelectorAll('list-item');
+    listedQuakes.forEach(q => q.div.classList.remove('selected-item'));
+
+    listedQuakes.forEach(q => {
+        if (q.id == earthquake.id) {
+            q.div.classList.add('selected-item');
+        }
+    })
+
     const popup = document.createElement('map-quake-card');
     document.querySelector('#selected-quake').appendChild(popup);
     popup.place = earthquake.properties.place;
@@ -123,9 +176,14 @@ export function selectQuake(earthquake) {
         popup.favoriteButton.innerHTML = 'Unfavorite';
         popup.favoriteButton.onclick = () => unfavoriteQuake(earthquake, popup.favoriteButton);
     }
+    if (listCollapsed) {
+        popup.div.classList.add('collapsed');
+    }
 }
 
 function deselectQuake() {
+    const listedQuakes = document.querySelectorAll('list-item');
+    listedQuakes.forEach(q => q.div.classList.remove('selected-item'));
     document.querySelector('#selected-quake').innerHTML = '';
     map.deselectSymbol();
 }
@@ -290,4 +348,71 @@ function focusOn(location) {
     }
 
     return url;
+}
+
+function collapseSearch() {
+    const search = document.querySelector('#search-options');
+    const list = document.querySelector('#quake-list');
+    const expand = document.querySelector('#search-prompt');
+
+    expand.style.visibility = 'visible';
+    search.classList.add('collapsed');
+    list.classList.add('full');
+    searchCollapsed = true;
+
+    expand.onclick = expandSearch;
+}
+
+function expandSearch() {
+    const search = document.querySelector('#search-options');
+    const list = document.querySelector('#quake-list');
+    const expand = document.querySelector('#search-prompt');
+
+    expand.style.visibility = 'hidden';
+    search.classList.remove('collapsed');
+    list.classList.remove('full');
+    searchCollapsed = false;
+}
+
+function collapseList() {
+    const searchList = document.querySelector('#search-list');
+    const expand = document.querySelector('#search-prompt');
+    const selected = document.querySelector('#selected-quake map-quake-card');
+    const width = window.innerWidth;
+    const h2 = document.querySelector('#search-options h2');
+    if (width > 440 && h2 == this) {
+        return;
+    }
+
+    expand.style.visibility = 'visible';
+    searchList.classList.add('collapsed');
+    if (selected) {
+        selected.div.classList.add('collapsed');
+    }
+    expand.classList.add('list');
+
+    map.fullscreenMap();
+    listCollapsed = true;
+    expand.onclick = expandList;
+}
+
+function expandList() {
+    const searchList = document.querySelector('#search-list');
+    const expand = document.querySelector('#search-prompt');
+    const selected = document.querySelector('#selected-quake map-quake-card');
+
+    if (!searchCollapsed) {
+        expand.style.visibility = 'hidden';
+    }
+    else {
+        expand.onclick = expandSearch;
+    }
+    expand.classList.remove('list');
+    searchList.classList.remove('collapsed');
+    if (selected) {
+        selected.div.classList.remove('collapsed');
+    }
+
+    map.reduceMap();
+    listCollapsed = false;
 }

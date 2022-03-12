@@ -22,7 +22,7 @@
   <app-navbar></app-navbar>
   <div id="map"></div>
 
-  <div id="search-list">
+  <div id="search-list" class="collapsed">
     <div class="box">
       <div id="search-options">
         <h2 class="title is-4">Search Earthquakes</h2>
@@ -107,16 +107,27 @@
           <p class="has-text-grey ml-5" id="result-text">Showing 50 Quakes from search results</p>
         </div>
         <hr>
-        <div class="collapse">
+        <div id="collapse-search">
           <i class="fa-solid fa-angle-up fa-lg"></i>
+        </div>
+        <div id="reset-params">
+          <i class="fa-solid fa-trash-can fa-lg"></i>
         </div>
       </div>
       <div id="quake-list">
         <list-item></list-item>
       </div>
     </div>
+    <div id="collapse-list">
+      <i class="fa-solid fa-angle-left fa-lg"></i>
+    </div>
   </div>
 
+  <div id="search-prompt">
+    <div class="box">
+    <h2 class="title is-4">Search Earthquakes</h2>
+    </div>
+  </div>
   <div id="selected-quake"></div>
 
 

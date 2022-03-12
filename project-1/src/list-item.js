@@ -14,24 +14,59 @@ template.innerHTML = `
   flex-direction: column;
   min-width: 20px;
   max-width: 250px;
+  align-items: flex-start
+}
+.centered {
+  align-items: center;
+  text-align: center;
 }
 .level-item .text-overflow {
   display: inline-block;
-  width: 250px;
+  max-width: 250px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.selected {
+.selected-item {
   background-color: #2249d6;
   color: white;
 }
-.selected .title, .selected .subtitle, .selected .heading {
+.selected-item:hover {
+  background-color: #2249d6;
   color: white;
+}
+.selected-item .title, .selected-item .subtitle, .selected-item .heading {
+  color: white;
+}
+
+@media screen and (max-width: 440px) {
+  .heading {
+    font-size: 10px !important;
+    letter-spacing: 0px !important;
+  }
+  .subtitle {
+    font-size: 1.3rem !important;
+  }
+  .title {
+    font-size: 1.15rem !important;
+  }
+  #time {
+    font-size: 1rem !important;
+  }
+
+  .level-item {
+    width: calc(65%);
+  }
+  .level-item.centered {
+    width: calc(17.5%);
+  }
+  .level-item .text-overflow {
+    width: calc(75%);
+  }
 }
 </style>
 <div class="level is-mobile" id="item">
-  <div class="level-item">
+  <div class="level-item centered">
     <p class="heading">Magnitude</p>
     <p id="magnitude" class="subtitle is-4">5.6</p>
   </div>
@@ -41,7 +76,7 @@ template.innerHTML = `
       <p id="time" class="is-size-6 text-overflow">12345678900000000000000000000000000000</p>
     </div>
   </div>
-  <div class="level-item">
+  <div class="level-item centered">
     <p class="heading">Depth</p>
     <p id="depth">10km</p>
   </div>
@@ -67,6 +102,7 @@ class ListItem extends HTMLElement {
     this.locHTML = this.shadowRoot.querySelector('#location');
     this.timHTML = this.shadowRoot.querySelector('#time');
     this.depHTML = this.shadowRoot.querySelector('#depth');
+    this.div = this.shadowRoot.querySelector('.level');
   }
 
   render() {

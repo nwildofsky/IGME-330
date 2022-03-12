@@ -12,7 +12,7 @@ template.innerHTML = `
     <!-- logo / brand -->
     <div class="navbar-brand">
       <a class="navbar-item is-size-5 has-text-weight-medium" href="index.html">
-        <img src="./images/qt_logo_white.png" alt="Quake Tracker Logo">
+        <img src="./images/qt_logo_transp.png" alt="Quake Tracker Logo">
         <span class="logo-text">Quake Tracker</span>
       </a>
       <a class="navbar-burger" id="burger">
