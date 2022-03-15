@@ -3,13 +3,28 @@ template.innerHTML = `
 <style>
 footer{
     color: white;
-    background-color: black;
+    background-color: #181818;
     padding: .5rem;
-    margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    column-gap: 5rem;
+}
+
+#features p {
+    margin-bottom: .4rem;
+}
+#features p:not(:first-child) {
+    margin-top: .4rem;
 }
 </style>
 <footer>
-    &copy; 2022 Nathan Wildofsky
+    <p id="name">&copy; <slot name="year">2022</slot> Nathan Wildofsky</p>
+    <div id="features">
+        <p>Earthquake data provided by: <slot name="api"></slot></p>
+        <p>Mapping features provided by: <slot name="map"></slot></p>
+    </div>
 </footer>
 `;
 

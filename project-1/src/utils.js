@@ -6,6 +6,8 @@ export function getDateTimeString(date, minusYears=0, minusMonths=0, minusDays=0
     let hour = date.getHours();
     let minute = date.getMinutes();
     let second = date.getSeconds();
+    const timeZoneOffset = date.getTimezoneOffset();
+    minusHours += (timeZoneOffset / 60);
 
     if (minusYears && year >= minusYears) {
         year -= minusYears;
@@ -41,6 +43,10 @@ export function getDateTimeString(date, minusYears=0, minusMonths=0, minusDays=0
             day--;
             hour = 24 + hour;
         }
+        else if ((hour - minusHours) > 24) {
+            hour = (hour - minusHours) - 24;
+            day++;
+        }
         else {
             hour -= minusHours;
         }
@@ -61,7 +67,6 @@ export function epochToDate(epochValue) {
     const date = new Date(epochValue);
     let dateString = getDateTimeString(date);
     dateString = dateString.replace('T', ' ');
-    dateString += ' (UTC)';
     return dateString;
 }
 

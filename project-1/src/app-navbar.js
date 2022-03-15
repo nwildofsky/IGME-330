@@ -7,13 +7,20 @@ template.innerHTML = `
     font-weight: 800;
     padding-left: .1rem;
 }
+.navbar.has-shadow {
+  box-shadow: 0 2px 0 0 #cecece;
+}
+
+.navbar-menu.is-active {
+  display: block;
+}
 </style>
 <nav class="navbar has-shadow is-white">
     <!-- logo / brand -->
     <div class="navbar-brand">
       <a class="navbar-item is-size-5 has-text-weight-medium" href="index.html">
         <img src="./images/qt_logo_transp.png" alt="Quake Tracker Logo">
-        <span class="logo-text">Quake Tracker</span>
+        <span class="logo-text"><slot></slot></span>
       </a>
       <a class="navbar-burger" id="burger">
         <span></span>
@@ -33,7 +40,7 @@ template.innerHTML = `
         </a>
 
         <a class="navbar-item is-hoverable" href="./favorites.html" data-location="change-page">
-          Favorites
+          Saved
         </a>
 
         <a class="navbar-item is-hoverable" href="./documentation.html" data-location="change-page">
@@ -56,10 +63,16 @@ class AppNavbar extends HTMLElement {
     let url = window.location.href;
     url = url.split('/');
     const page = url[url.length - 1];
+    const pageNoQuery = page.split('?')[0];
     for (let link of this.navLinks) {
       const linkURL = link.href.split('/');
       const linkPage = linkURL[linkURL.length - 1];
-      if (page == linkPage) {
+      if (pageNoQuery) {
+        if (pageNoQuery == linkPage) {
+          link.style.fontWeight = 650;
+        }
+      }
+      else if (page == linkPage) {
         link.style.fontWeight = 650;
       }
     }

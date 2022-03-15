@@ -12,7 +12,7 @@ export function initMap(geoJson) {
     mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJmbGFyZSIsImEiOiJja3pscTBrdWIxbXozMnBxaHJuM3Z6amltIn0.re0L-Mhcb62AJkoEchtunw';
     map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/light-v10',
+        style: 'mapbox://styles/mapbox/streets-v11',
         center: [-74.5, 40],
         zoom: 1
     });
@@ -41,8 +41,8 @@ export function initMap(geoJson) {
                         'icon-image': 'custom-marker',
                         'icon-allow-overlap': true,
                         'icon-size': ['interpolate', ['linear'], ['zoom'],
-                            2, ['*', .0175, ['get', 'mag']],
-                            9, ['*', .0625, ['get', 'mag']]
+                            2, ['*', .017, ['get', 'mag']],
+                            15, ['*', .0625, ['get', 'mag']]
                         ]
                     }
                 });
@@ -98,8 +98,8 @@ export function selectSymbol(selectedQuake) {
         'layout': {
             'icon-image': 'selected-marker',
             'icon-size': ['interpolate', ['linear'], ['zoom'],
-                2, ['*', .0175, ['get', 'mag']],
-                9, ['*', .0625, ['get', 'mag']]
+                2, ['*', .017, ['get', 'mag']],
+                15, ['*', .0625, ['get', 'mag']]
             ]
         }
     });
@@ -129,13 +129,6 @@ export function updateSymbols(geoJson) {
     map.getSource('quakes').setData(geoJson);
     allQuakes = geoJson;
 }
-
-// export function addMarkersToMap() {
-//     // add markers to map
-//     for (const feature of geoJson.features) {
-//         addMarker(feature.geometry.coordinates, 'marker');
-//     }
-// }
 
 export function flyTo(center = [0, 0]) {
     map.flyTo({ center: center });

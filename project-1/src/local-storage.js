@@ -25,15 +25,6 @@ const writeLocalStorage = (allValues) => {
 
 export const clearLocalStorage = () => writeLocalStorage(defaultData);
 
-// export const setAppTitle = (str) => {
-//     const allValues = readLocalStorage();
-
-//     allValues.appTitle = str;
-//     writeLocalStorage(allValues);
-// };
-
-// export const getAppTitle = () => readLocalStorage().appTitle;
-
 export const addFavorite = (str) => {
     const allValues = readLocalStorage();
 
@@ -42,6 +33,15 @@ export const addFavorite = (str) => {
 };
 
 export const getFavorites = () => readLocalStorage().favorites;
+
+export const getFavoriteByID = (quakeID) => {
+    const allFavorites = getFavorites();
+
+    const found = allFavorites.find(quake => quake.id == quakeID);
+    if (found) {
+        return found;
+    }
+}
 
 export const clearFavorites = () => {
     const allValues = readLocalStorage();
@@ -88,6 +88,16 @@ export const clearLastQuery = () => {
 
     allValues.lastQuery = {};
     writeLocalStorage(allValues);
+}
+
+export const isInLastQuery = (quakeID) => {
+    const lastQuery = getLastQuery().features;
+
+    const found = lastQuery.find(quake => quake.id == quakeID);
+    if (found) {
+        return true;
+    }
+    return false;
 }
 
 export const addSearchParams = (str) => {

@@ -28,11 +28,11 @@ template.innerHTML = `
   text-overflow: ellipsis;
 }
 .selected-item {
-  background-color: #2249d6;
+  background-color: #3273dc;
   color: white;
 }
 .selected-item:hover {
-  background-color: #2249d6;
+  background-color: #3273dc;
   color: white;
 }
 .selected-item .title, .selected-item .subtitle, .selected-item .heading {

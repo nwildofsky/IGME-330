@@ -23,7 +23,7 @@ body {
 }
 
 .is-dark-blue {
-    background-color: rgb(6, 18, 185);
+    background-color: rgb(2, 41, 229);
     color: white;
 }
 .is-dark-blue .title {
@@ -33,7 +33,7 @@ body {
     color: white;
 }
 .is-blue {
-    background-color: rgb(53, 64, 216);
+    background-color: rgb(49, 78, 221);
     color: white;
 }
 .is-blue .title {
@@ -42,6 +42,16 @@ body {
 .is-blue .subtitle {
     color: white;
 }
+.is-light-blue {
+    background-color: rgb(215, 226, 230);
+    color: black;
+}
+.is-light-blue .title {
+    color: black;
+}
+.is-light-blue .subtitle {
+    color: black;
+}
 
 #favorites-container {
     margin-bottom: 1.5rem;
@@ -49,6 +59,8 @@ body {
 #favorites-container .form-row {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 15px;
     margin: 0 auto;
     align-items: center;
 }
@@ -62,6 +74,9 @@ body {
 }
 #favorites-container .form-row button {
     margin: 0 .5rem;
+    flex: 1 1 180px;
+    max-width: 220px;
+    min-width: 130px;
 }
 .select select {
     font-family: 'Outfit', sans-serif;
@@ -83,4 +98,16 @@ body {
 
 .page-header {
     margin-top: 1.5rem;
+}
+
+ul {
+    list-style: outside;
+    margin: 1rem;
+}
+
+@media screen and (max-width: 1024px) {
+    .page-header {
+        margin-left: 1.5rem;
+        margin-top: 2.5rem;
+    }
 }

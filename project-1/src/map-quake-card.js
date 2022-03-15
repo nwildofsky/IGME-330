@@ -18,11 +18,13 @@ template.innerHTML = `
 }
 #map-quake-card.collapsed {
   left: 20px;
+  z-index: 1;
 }
 @media screen and (max-width: 440px) {
-  #map-quake-card.collapsed {
+  #map-quake-card {
     left: 0px !important;
     width: 100%;
+    z-index: -1;
   }
 }
 
@@ -67,7 +69,7 @@ template.innerHTML = `
           </div>
         </div>
         <div class="buttons-right">
-          <button class="button is-orange" id="favorite-btn">Favorite</button>
+          <button class="button is-orange" id="favorite-btn">Save</button>
           <button class="button is-link" id="close-btn">Close</button>
         </div>
       </div>

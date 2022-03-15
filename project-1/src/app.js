@@ -5,18 +5,31 @@ import * as ls from "./local-storage.js"
 
 let status;
 let count;
+let geoJson;
 const baseURL = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
 let selectedQuake = {
     'type': 'FeatureCollection',
     'features': []
 };
+let linkedQuake;
+let addedQuake;
 let searchCollapsed = false, listCollapsed = false;
 
 function init() {
+    const urlQuery = window.location.href.split('?')[1];
+
     if (JSON.stringify(ls.getLastQuery()) === '{}') {
         ajax.getQuakeData(queryPast6Hours(), initQuakeMap, queryTimedOut, queryFailed);
     }
     else {
+        if (urlQuery) {
+            if (ls.isInLastQuery(urlQuery)) {
+                linkedQuake = utils.getQuakeInfoFromJson(ls.getLastQuery(), urlQuery);
+            }
+            else {
+                addedQuake = ls.getFavoriteByID(urlQuery);
+            }
+        }
         useLastQuery();
     }
     document.querySelector('#search-btn').onclick = getSearchParams;
@@ -32,6 +45,7 @@ function init() {
         searchPrompt.classList.add('list');
         searchPrompt.style.visibility = 'visible';
         searchPrompt.onclick = expandList;
+        listCollapsed = true;
     }
 }
 
@@ -58,6 +72,10 @@ function refreshQuakeMap(json) {
 
 function useLastQuery() {
     const json = ls.getLastQuery();
+    if (addedQuake) {
+        json.features.push(linkedQuake);
+        json.metadata.count++;
+    }
     map.initMap(json);
     loadQuakes(json);
     document.querySelector('#result-text').innerHTML = `Showing ${count} Quakes from search results`;
@@ -71,6 +89,18 @@ function useLastQuery() {
     document.querySelector('#end-time').max = currentDay;
     const searchParams = ls.getSearchParams();
     setSearchParams(searchParams);
+    if (linkedQuake) {
+        map.setZoomLevel(13);
+        map.flyTo([linkedQuake.geometry.coordinates[0], linkedQuake.geometry.coordinates[1]]);
+        window.history.pushState({}, '', './app.html');
+    }
+    else if (addedQuake) {
+        map.setZoomLevel(13);
+        map.flyTo([addedQuake.geometry.coordinates[0], addedQuake.geometry.coordinates[1]]);
+        ls.clearLastQuery();
+        ls.addLastQuery(json);
+        window.history.pushState({}, '', './app.html');
+    }
 }
 
 function setSearchParams(searchParams) {
@@ -124,6 +154,7 @@ function queryFailed() {
 function loadQuakes(json) {
     status = json.metadata.status;
     count = json.metadata.count;
+    geoJson = json;
 
     const quakeList = document.querySelector('#quake-list');
     quakeList.innerHTML = '';
@@ -173,7 +204,7 @@ export function selectQuake(earthquake) {
         popup.favoriteButton.onclick = () => favoriteQuake(earthquake, popup.favoriteButton);
     }
     else {
-        popup.favoriteButton.innerHTML = 'Unfavorite';
+        popup.favoriteButton.innerHTML = 'Unsave';
         popup.favoriteButton.onclick = () => unfavoriteQuake(earthquake, popup.favoriteButton);
     }
     if (listCollapsed) {
@@ -190,14 +221,14 @@ function deselectQuake() {
 
 function favoriteQuake(earthquake, favoriteButton) {
     ls.addFavorite(earthquake);
-    favoriteButton.innerHTML = 'Unfavorite';
+    favoriteButton.innerHTML = 'Unsave';
     favoriteButton.onclick = null;
     favoriteButton.onclick = () => unfavoriteQuake(earthquake, favoriteButton);
 }
 
 function unfavoriteQuake(earthquake, favoriteButton) {
     ls.removeFavorite(earthquake.id);
-    favoriteButton.innerHTML = 'Favorite';
+    favoriteButton.innerHTML = 'Save';
     favoriteButton.onclick = null;
     favoriteButton.onclick = () => favoriteQuake(earthquake, favoriteButton);
 }

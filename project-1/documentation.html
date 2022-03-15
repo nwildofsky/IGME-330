@@ -8,11 +8,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
   <link rel="stylesheet" href="./styles/default-styles.css" type="text/css">
+  <script type="module" src="./src/init.js"></script>
 </head>
 
-<body>
-  <app-navbar></app-navbar>
+<body class="is-light-blue">
+  <app-navbar>Quake Tracker</app-navbar>
 
   <section class="section">
     <div class="container">
@@ -90,9 +92,93 @@
         <p>Endpoints used: https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson</p>
         <p>No API key required!</p>
       </div>
+
       <h2 class="title">Noteworthy</h2>
+      <div class="block">
+        <p>Mobile Friendly:</p>
+        <ul>
+          <li>Elements styled with bulma adapt fludly to different browser sizes</li>
+          <li>The large search and list component can be collapsed to give more room for the map.</li>
+          <li>On screen sizes under 850px wide the quake search and list is automatically collaped when entering the page.</li>
+          <li>The saved quake cards have flexible sizes so as many as possible can fit on the page.</li>
+        </ul>
+        <p>Advanced API Interface:</p>
+        <ul>
+          <li>Start time and end time of each quake can be specified.</li>
+          <li>Minimum and maximum magnitude of each quake can be specified.</li>
+          <li>Minimum and maximum depth of each quake can be specified.</li>
+          <li>Sort order can be specified.</li>
+          <li>Amount of results can be specified.</li>
+          <li>Bounding latitude and longitude can be set intuitively with focus locations.</li>
+        </ul>
+        <p>User Experience:</p>
+        <ul>
+          <li>.is-loading class used on the search button when fetching from API.</li>
+          <li>All clickable elements cause the cursor state to change to pointer.</li>
+          <li>All buttons have hover states to let the user know they are clickable.</li>
+          <li>Map will smoothly glide over to selected quake or focus location.</li>
+          <li>Clicking the map icon of a saved quake will open the map and focus on that specific quake.</li>
+          <li>The save button for each quake will change states depending on if it's saved or not.</li>
+        </ul>
+        <p>App Local Storage:</p>
+        <ul>
+          <li>After each search and map refresh the search parameters and search results are saved.</li>
+          <li>After changing pages within the app or even closing the site, the app will remember saved data.</li>
+          <li>Saved quakes are noted in the App page as well as the Saved page.</li>
+          <li>The app will only make a new API call when a user issues a new search.</li>
+        </ul>
+      </div>
+
       <h2 class="title">Grading</h2>
+      <div class="block">
+        <p>Requirements met:</p>
+        <ul>
+          <li>All web pages use the Bulma Framework.</li>
+          <li>Has a global navigation system with visible cues to tell the user what page they are on.</li>
+          <li>Uses multiple web components that all have at least 1 parameter.</li>
+          <li>Includes an original logo.</li>
+          <li>There are multiple search parameters for the user to access the API.</li>
+          <li>The app saves the search parameters after each search to local storage.</li>
+          <li>Local storage data is saved under my own personalized key.</li>
+          <li>The app accesses the API via Ajax fetch and promises.</li>
+          <li>The map contains clickable markers that display more info about the quake.</li>
+          <li>Quakes can be saved to local storage and all saved quakes can be seen in their own webpage.</li>
+          <li>Map controls added to the map.</li>
+          <li>Every new search will refresh the markers on the map.</li>
+          <li>The app lets the user know when it is searching and what UI elements are clickable.</li>
+          <li>Users can clear all saved quakes and/or clear all app data from the Saved page.</li>
+        </ul>
+        <p>How I went above and beyond project requirements:</p>
+        <ul>
+          <li>Clicked quake markers on the map are highlighted a different color and focused on.</li>
+          <li>The selected quake also highlights the respective list element when clicked.</li>
+          <li>The most recent query of the API is saved to local storage so there are less unecessary calls.</li>
+          <li>Quakes can be saved and unsaved both in the App page and in the Saved page.</li>
+          <li>Saved quakes have a link to their USGS site and back to the map.</li>
+          <li>The search parameters and the list of quakes can both be individually collapsed to make more room for the map.</li>
+          <li>On smaller screens the search and quake list is auto-hidden when the app is loaded.</li>
+          <li>All pages of the app are mobile friendly.</li>
+          <li>If the fetch of the API takes too long, the query times out and allows the user to search again.</li>
+        </ul>
+      </div>
+
       <h2 class="title">To Do</h2>
+      <div class="block">
+        <p>What I would add/change if I had more time:</p>
+        <ul>
+          <li>Get the Sort by and Filter by magnitude options working on the Saved page.</li>
+          <li>Smoother trnasitions when the size of the map is changed.</li>
+          <li>More accurately sized map markers for the quakes at each zoom level.</li>
+          <li>A more consistent and better looking color theme for the website.</li>
+          <li>Give icons hover states so they look more clickable.</li>
+          <li>A more intuitive way to allow users to pick a range of dates with an input.</li>
+          <li>Instead of linking each saved quake to the USGS site for more info, include all the
+            extra possible info given with each quake into the Saved page.
+          </li>
+          <li>Let users search for any location in the world with a text input.</li>
+        </ul>
+      </div>
+
       <div class="columns">
         <div class="column is-4">
           <h2 class="title">Proposal</h2>
@@ -125,10 +211,11 @@
     </div>
   </section>
 
-  <app-footer></app-footer>
-
-
-  <script type="module" src="./src/init.js"></script>
+  <app-footer>
+    <span slot="name">2022</span>
+    <a href="https://earthquake.usgs.gov/fdsnws/event/1/" slot="api">USGS Earthquake Catalog</a>
+    <a href="https://www.mapbox.com/" slot="map">Mapbox</a>
+  </app-footer>
 </body>
 
 </html>
