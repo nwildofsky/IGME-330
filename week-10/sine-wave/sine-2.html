@@ -25,17 +25,17 @@
 		setTimeout(loop,1000/fps);
 		ctx.save();
 		ctx.fillStyle = 'black';
-		ctx.globalAlpha = 1/fps;
+		ctx.globalAlpha = 1/(fps / 3);
 		ctx.fillRect(0,0,canvasWidth,canvasHeight);
 		ctx.restore();
 
-		x += 10;
-		counter += .3;
-		y = canvasHeight/2 + Math.sin(counter) * 100;
+		x += 2;
+		counter += .08;
+		y = canvasHeight/2 + Math.sin(counter) * 120;
 		drawCircle(ctx,x,y,2,'white');
-		y = canvasHeight/2 + Math.cos(counter) * 100;
+		y = canvasHeight/2 + Math.cos(counter) * 120;
 		drawCircle(ctx,x,y,2,'red');
-		y = canvasHeight/2 + Math.sqrt(x%50) * 5;
+		y = canvasHeight/2 + Math.sqrt(x%200) * 10;
 		drawCircle(ctx,x,y,4,'yellow');
 
 		if (x > canvasWidth) x = 0;
