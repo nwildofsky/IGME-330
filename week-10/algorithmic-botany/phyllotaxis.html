@@ -46,18 +46,20 @@
 
             //let color = `rgb(${n % 256},0,255)`;
 
-            // let aDegrees = (n * divergence) % 256;
-            // let color = `rgb(${aDegrees},0,255)`;
+            let rDegrees = (n * divergence) % 256;
+            let gDegrees = (n) % 256;
+            let bDegrees = (n) % 256;
+            let color = `rgb(${rDegrees},${gDegrees},${bDegrees})`;
 
             // let aDegrees = (n * divergence) % 361;
             // let color = `hsl(${aDegrees},100%,50%)`;
 
-            let color = `hsl(${n/5 % 361},100%,50%)`;
+            // let color = `hsl(${n/5 % 361},100%,50%)`;
 
             drawCircle(ctx, x, y, 2, color);
 
-            //c += .01;
-            divergence += .01;
+            c += c * .001;
+            divergence += 0.001;
             n++;
         }
 
