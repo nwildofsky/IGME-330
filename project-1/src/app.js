@@ -73,7 +73,7 @@ function refreshQuakeMap(json) {
 function useLastQuery() {
     const json = ls.getLastQuery();
     if (addedQuake) {
-        json.features.push(linkedQuake);
+        json.features.push(addedQuake);
         json.metadata.count++;
     }
     map.initMap(json);
