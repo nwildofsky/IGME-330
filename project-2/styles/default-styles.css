@@ -1,0 +1,66 @@
+body {
+	background: #3b899c;
+	font-family: tahoma, verdana, sans serif;
+  position: relative;
+}
+
+#bg {
+	margin-left: 1rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+	background: #fafafa;
+}
+
+#left-led, #mid-led, #right-led {
+  /* border: #fafafa 1px solid;
+  border-style: inset; */
+  display: block;
+  position: relative;
+}
+#left-led {
+  top: 3px;
+  left: -2px;
+}
+#mid-led {
+  top: -38px;
+  left: 98px;
+}
+#right-led {
+  top: -78px;
+  left: 315px;
+}
+#rain {
+  display: none;
+}
+
+#controls{
+  margin-left: 1rem;
+  margin-top: -100px;
+}
+
+#volume-label{
+  margin-left: 1rem;
+}
+
+section{
+  margin-bottom: 1rem;
+}
+
+#play-btn{
+  font-size: 1.2rem;
+  width: 6rem;
+}
+
+button[data-playing="yes"]:after{
+  content: "Pause";
+}
+
+button[data-playing="no"]:after{
+  content: "Play";
+}
+
+#fs-btn{
+  font-size: 1.2rem;
+  width: 8rem;
+}
