@@ -13,7 +13,7 @@ const DEFAULTS = Object.freeze({
 
 // 4 - create a new array of 8-bit integers (0-255)
 // this is a typed array to hold the audio frequency data
-let audioData = new Uint8Array(DEFAULTS.numSamples/2);
+let audioData = new Uint8Array(DEFAULTS.numSamples / 2);
 
 // **Next are "public" methods - we are going to export all of these at the bottom of this file**
 function setupWebAudio(filePath) {
@@ -41,7 +41,7 @@ function setupWebAudio(filePath) {
     If DEFAULTS.numSamples (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, 
     the third is 344Hz, and so on. Each bin contains a number between 0-255 representing 
     the amplitude of that frequency.
-    */ 
+    */
 
     // fft stands for Fast Fourier Transform
     analyserNode.fftSize = DEFAULTS.numSamples;
@@ -50,8 +50,16 @@ function setupWebAudio(filePath) {
     gainNode = audioCtx.createGain();
     gainNode.gain.value = DEFAULTS.gain;
 
+    // create treble node
+    // https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode
+    let biquadFilter = audioCtx.createBiquadFilter();
+    biquadFilter.type = "lowshelf";
+    biquadFilter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+    biquadFilter.gain.setValueAtTime(25, audioCtx.currentTime);
+
     // 8 - connect the nodes - we now have an audio graph
-    sourceNode.connect(analyserNode);
+    sourceNode.connect(biquadFilter);
+    biquadFilter.connect(analyserNode);
     analyserNode.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 }
@@ -73,4 +81,4 @@ function setVolume(value) {
     gainNode.gain.value = value;
 }
 
-export {audioCtx,setupWebAudio,playCurrentSound,pauseCurrentSound,loadSoundFile,setVolume,analyserNode};
+export { audioCtx, setupWebAudio, playCurrentSound, pauseCurrentSound, loadSoundFile, setVolume, analyserNode };
