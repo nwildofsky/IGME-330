@@ -41,14 +41,14 @@ function init() {
     loop();
 }
 
-function setupUI(canvasElement) {
+function setupUI(bgCanvas) {
     // A - hookup fullscreen button
     const fsButton = document.querySelector("#fs-btn");
 
     // add .onclick event to button
     fsButton.onclick = e => {
         console.log("init called");
-        utils.goFullscreen(canvasElement);
+        utils.goFullscreen(bgCanvas);
     };
 
     const playButton = document.querySelector("#play-btn");

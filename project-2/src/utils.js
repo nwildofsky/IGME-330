@@ -47,3 +47,5 @@ export const preloadImage = (url) => {
 }
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+export const lerp = (min, max, percent) => min + (max - min) * percent;

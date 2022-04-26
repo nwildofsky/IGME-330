@@ -85,15 +85,6 @@ function draw(params = {}, dt = 0) {
     ctxBg.save();
     drawBackground('./images/background_full.png');
 
-    // 3 - draw gradient
-    // if (params.showGradient) {
-    //     ctx.save();
-    //     ctx.fillStyle = gradient;
-    //     ctx.globalAlpha = .3;
-    //     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    //     ctx.restore();
-    // }
-
     // 4 - draw bars
     if (params.showBars) {
         clearBars();
@@ -104,50 +95,11 @@ function draw(params = {}, dt = 0) {
         if (!rain) {
             rain = new Rain(ctxBg, bgCanvasWidth, audioData, dt);
         }
+        if (document.querySelector('#play-btn').dataset.playing == 'no') dt = 0;
         rain.setDt(dt);
-        rain.rainWithThreshold(.4);
+        rain.rainWithThreshold(.34, 1);
     }
 
-    // 5 - draw circles
-    // if (params.showCircles) {
-    //     let maxRadius = bgCanvasHeight / 4;
-    //     ctxBg.save();
-    //     ctxBg.globalAlpha = .5;
-    //     for (let i = 0; i < audioData.length; i++) {
-    //         let percent = audioData[i] / 255;
-    //         let circleRadius = percent * maxRadius;
-
-    //         // red-ish circles
-    //         ctxBg.beginPath();
-    //         ctxBg.fillStyle = utils.makeColor(255, 111, 111, .34 - percent / 3.0);
-    //         ctxBg.arc(bgCanvasWidth / 2, bgCanvasHeight / 2, circleRadius, 0, Math.PI * 2, false);
-    //         ctxBg.fill();
-    //         ctxBg.closePath();
-
-    //         // blue-ish circles, bigger, more transparent
-    //         ctxBg.beginPath();
-    //         ctxBg.fillStyle = utils.makeColor(0, 0, 255, .10 - percent / 10.0);
-    //         ctxBg.arc(bgCanvasWidth / 2, bgCanvasHeight / 2, circleRadius * 1.5, 0, Math.PI * 2, false);
-    //         ctxBg.fill();
-    //         ctxBg.closePath();
-
-    //         // yellow-ish circles, smaller
-    //         ctxBg.save();
-    //         ctxBg.beginPath();
-    //         ctxBg.fillStyle = utils.makeColor(200, 200, 0, .5 - percent / 5.0);
-    //         ctxBg.arc(bgCanvasWidth / 2, bgCanvasHeight / 2, circleRadius * .5, 0, Math.PI * 2, false);
-    //         ctxBg.fill();
-    //         ctxBg.closePath();
-    //         ctxBg.restore();
-    //     }
-    //     ctxBg.restore();
-    // }
-
-    // 6 - bitmap manipulation
-    // TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
-    // regardless of whether or not we are applying a pixel effect
-    // At some point, refactor this code so that we are looping though the image data only if
-    // it is necessary
     if (params.showNoise || params.showInvert || params.showEmboss) {
 
         // A) grab all of the pixels on the canvas and put them in the `data` array
@@ -201,6 +153,7 @@ function drawBackground(image) {
         bg = utils.preloadImage(image);
         bgLoaded = true;
     }
+    ctxBg.globalAlpha = 0.3;
     ctxBg.drawImage(bg, 0, 0, 960, 540);
     ctxBg.restore();
 }
@@ -213,8 +166,6 @@ function drawBars() {
     let barHeight = 1;
     let maxBarHeight = 35;
 
-    saveAllCanvas();
-    fillStyleAllCanvas(barGradient);
     // loop through the data and draw
     let middleStart = 0;
     let rightStart = 0;
@@ -222,30 +173,38 @@ function drawBars() {
         if (i / audioData.length <= .22) {
             barHeight = (audioData[i] / 256) * lledCanvasHeight;
             barHeight = utils.clamp(barHeight, .1*lledCanvasHeight, maxBarHeight);
-            ctxLled.fillRect((1.5*margin) + (i * (barspacing + barWidth)), lledCanvasHeight - barHeight, barWidth, barHeight);
+            drawRect(ctxLled, (1.5*margin) + (i * (barspacing + barWidth)), lledCanvasHeight - barHeight,
+                     barWidth, barHeight, barGradient);
         }
         else if (i / audioData.length <= .78) {
             margin = 1.8;
             if (middleStart == 0) middleStart = i;
             barHeight = (audioData[i] / 256) * mledCanvasHeight;
             barHeight = utils.clamp(barHeight, .1*mledCanvasHeight, maxBarHeight);
-            ctxMled.fillRect((1.5*margin) + ((i - middleStart) * (barspacing + barWidth)), mledCanvasHeight - barHeight, barWidth, barHeight);
+            drawRect(ctxMled, (1.5*margin) + ((i - middleStart) * (barspacing + barWidth)), mledCanvasHeight - barHeight,
+                     barWidth, barHeight, barGradient);
         }
         else {
             margin = .5
             if (rightStart == 0) rightStart = i;
             barHeight = (audioData[i] / 256) * rledCanvasHeight;
             barHeight = utils.clamp(barHeight, .1*rledCanvasHeight, maxBarHeight);
-            ctxRled.fillRect((1.5*margin) + ((i - rightStart) * (barspacing + barWidth)), rledCanvasHeight - barHeight, barWidth, barHeight);
+            drawRect(ctxRled, (1.5*margin) + ((i - rightStart) * (barspacing + barWidth)), rledCanvasHeight - barHeight,
+                     barWidth, barHeight, barGradient);
         }
     }
-    restoreAllCanvas();
 }
 
 function clearBars() {
+    ctxLled.beginPath();
     ctxLled.clearRect(0, 0, lledCanvasWidth, lledCanvasHeight);
+    ctxLled.closePath();
+    ctxMled.beginPath();
     ctxMled.clearRect(0, 0, mledCanvasWidth, mledCanvasHeight);
+    ctxMled.closePath();
+    ctxRled.beginPath();
     ctxRled.clearRect(0, 0, rledCanvasWidth, rledCanvasHeight);
+    ctxRled.closePath();
 }
 
 function setDashesForBars(ctx, ctxWidth, ctxHeight) {
@@ -276,6 +235,22 @@ function fillStyleAllCanvas(style) {
     ctxLled.fillStyle = style;
     ctxMled.fillStyle = style;
     ctxRled.fillStyle = style;
+}
+
+function drawRect(ctx, x, y, width, height, fillStyle=0, strokeStyle=0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
+    ctx.closePath();
+    if (fillStyle) {
+        ctx.fillStyle = fillStyle;
+        ctx.fill();
+    }
+    if (strokeStyle) {
+        ctx.strokeStyle = strokeStyle;
+        ctx.stroke();
+    }
+    ctx.restore();
 }
 
 export { setupCanvas, draw };
