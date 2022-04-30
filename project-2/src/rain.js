@@ -1,17 +1,15 @@
 import * as utils from './utils.js'
 
-class Rain {
+export class Rain {
     constructor(ctx, ctxWidth, audioData, dt) {
         Object.assign(this, { ctx, ctxWidth, audioData, dt });
         this.prevAudioData = [...audioData];
         this.musicDrops = [];
         this.randDrops = [];
         this.timer = Date.now();
-        this.calls = 0;
-        this.frameDiff = 5;
     }
 
-    rainWithThreshold(threshold, frequency) {
+    rainWithThreshold(threshold, sizeMean, speedStart, alphaStart) {
         if (this.dt) {
 
             // Create the raindrops
@@ -29,29 +27,16 @@ class Rain {
 
                 if (increase[i] >= threshold) {
                     const x = (i / this.audioData.length) * this.ctxWidth;
-                    const size = utils.lerp(0, 4.3, increase[i]);
-                    const speed = utils.getRandom(.3, .6);
+                    const size = utils.lerp(utils.clamp(sizeMean - 2, 0, 6), utils.clamp(sizeMean + 2, 0, 6), increase[i] - threshold);
+                    const speed = utils.getRandom(speedStart, utils.clamp(speedStart+0.3, 0, 2));
+                    const alpha = utils.getRandom(alphaStart, utils.clamp(alphaStart+0.3, 0, 1));
                     const limit = utils.getRandom(500, 540);
-                    const alpha = utils.getRandom(.35, .7);
                     //this.musicDrops[i] = new Raindrop(x, 0, size, '#abe6ff', speed, limit);
                     this.musicDrops.push(new Raindrop(x, 0, size, `rgba(117, 195, 235, ${alpha})`, speed, limit));
 
                     this.prevAudioData[i] = this.audioData[i];
                     increase[i] = 0;
                 }
-            }
-
-            if (this.getTimer() >= frequency) {
-                // Droplets regardless of music
-                for (let i = 0; i <= this.getTimer() / frequency; i++) {
-                    const x = utils.getRandom(0, this.ctxWidth);
-                    const size = utils.getRandom(.25, 1.1);
-                    const speed = utils.getRandom(.6, 1);
-                    const limit = utils.getRandom(460, 540);
-                    const alpha = utils.getRandom(.15, .6);
-                    this.randDrops.push(new Raindrop(x, 0, size, `rgba(117, 195, 235, ${alpha})`, speed, limit));
-                }
-                this.startTimer();
             }
         }
 
@@ -69,6 +54,28 @@ class Rain {
                 }
             }
         }
+    }
+
+    randomRain(delay, sizeStart, speedStart, alphaStart) {
+        if (this.dt) {
+            if (this.getTimer() >= delay) {
+                // Droplets regardless of music
+                const iterations = utils.clamp(this.getTimer() / delay, 0, 100);
+                for (let i = 0; i <= iterations; i++) {
+                    const x = utils.getRandom(0, this.ctxWidth);
+                    const size = utils.getRandom(sizeStart, utils.clamp(sizeStart + .85, 0, 3));
+                    const speed = utils.getRandom(speedStart, utils.clamp(speedStart + .4, 0, 2));
+                    const alpha = utils.getRandom(alphaStart, utils.clamp(alphaStart + .45, 0, 1));
+                    const limit = utils.getRandom(460, 540);
+                    this.randDrops.push(new Raindrop(x, 0, size, `rgba(117, 195, 235, ${alpha})`, speed, limit));
+                }
+                this.startTimer();
+            }
+        }
+        else {
+            this.startTimer();
+        }
+
         for (let i = 0; i < this.randDrops.length; i++) {
             if (this.randDrops[i].y <= this.randDrops[i].limit) {
                 this.randDrops[i].draw(this.ctx);
@@ -114,5 +121,3 @@ class Raindrop {
         ctx.restore();
     }
 }
-
-export { Rain };

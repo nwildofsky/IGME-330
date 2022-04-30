@@ -1,0 +1,16 @@
+{
+    "song": "media/Morning-Routine-Lofi-Study-Music.mp3",
+    "showRRain": true,
+    "rainDensity": 1,
+    "rRainSize": 0.25,
+    "rRainSpeed": 0.6,
+    "rRainOpacity": 0.15,
+    "showMRain": true,
+    "rainThreshold": 0.34,
+    "mRainSize": 3.9,
+    "mRainSpeed": 0.3,
+    "mRainOpacity": 0.35,
+    "showFlicker": true,
+    "showLights": true,
+    "showDonut": true
+}

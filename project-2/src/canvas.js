@@ -16,11 +16,14 @@ let ctxBg, bgCanvasWidth, bgCanvasHeight;
 let ctxLled, lledCanvasWidth, lledCanvasHeight;
 let ctxMled, mledCanvasWidth, mledCanvasHeight;
 let ctxRled, rledCanvasWidth, rledCanvasHeight;
-let bg, bgLoaded = false;
+let images;
+let switchLamp = false, time, delay, opacity = 0;
+let color1, color2, color3, index1, index2, index3;
+let prevAudioData = null, lowAudioData = null;
 let rain;
 
 
-function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeRef) {
+function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeRef, imageList) {
     // create drawing contexts
     ctxBg = bgCanvas.getContext("2d");
     bgCanvasWidth = bgCanvas.width;
@@ -48,114 +51,189 @@ function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeR
 
     // Set the LED canvas' into their proper spaces
     let warp = pwarp.getProjectionMatrix(0, 540, 220, 227.55,
-                                         91, 540, 311, 220.5,
-                                         91, 580, 311, 260.5,
-                                         0, 580, 220, 267.5);
+        91, 540, 311, 220.5,
+        91, 580, 311, 260.5,
+        0, 580, 220, 267.5);
     lledCanvas.style.transform = warp;
 
     warp = pwarp.getProjectionMatrix(180, 540, 397, 227,
-                                     390, 540, 607, 229,
-                                     390, 580, 607, 269,
-                                     180, 580, 397, 267);
+        390, 540, 607, 229,
+        390, 580, 607, 269,
+        180, 580, 397, 267);
     mledCanvas.style.transform = warp;
 
-    // let x1s = 0;
-    // let x2s = x1s + lledCanvasWidth, x3s = x2s, x4s = x1s;
-    // let y1s = 540;
-    // let y2s = y1s, y3s = y1s + mledCanvasHeight, y4s = y3s;
-    // let x1d = 213;
-    // let x2d = x1d + lledCanvasWidth, x3d = x2d, x4d = x1d;
-    // let y1d = 230;
-    // let y2d = y1d, y3d = y1d + mledCanvasHeight, y4d = y3d;
     warp = pwarp.getProjectionMatrix(0, 540, 213, 229,
-                                     85, 540, 298, 233.09,
-                                     85, 580, 298, 273,
-                                     0, 580, 213, 269);
+        85, 540, 298, 233.09,
+        85, 580, 298, 273,
+        0, 580, 213, 269);
     rledCanvas.style.transform = warp;
+
+    // Grab images to draw
+    images = imageList;
+    index1 = 1;
+    color1 = images.cl1[index1];
+    index2 = 0;
+    color2 = images.cl2[index2];
+    index3 = 0;
+    color3 = images.cl3[index3];
+
+    startTimer();
+    delay = utils.getRandom(1100, 6000);
 }
 
 function draw(params = {}, dt = 0) {
-    // 1 - populate the audioData array with the frequency data from the analyserNode
-    // notice these arrays are passed "by reference" 
+    // Populate the audioData array with the frequency data from the analyserNode
     analyserNode.getByteFrequencyData(audioData);
-    // OR
-    //analyserNode.getByteTimeDomainData(audioData); // waveform data
 
     // Draw background
-    ctxBg.save();
-    drawBackground('./images/background_full.png');
+    drawBackground();
 
-    // 4 - draw bars
-    if (params.showBars) {
-        clearBars();
-        drawBars();
-        setDashesForBars(ctxLled, lledCanvasWidth, lledCanvasHeight);
-        setDashesForBars(ctxMled, mledCanvasWidth, mledCanvasHeight);
-        setDashesForBars(ctxRled, rledCanvasWidth, rledCanvasHeight);
+    // Draw changing background lights
+    // drawCityLights(7,14,7.5);
+    drawCityLights(params, 1.3, 3.7, 2);
+
+    // Draw flickering lamp
+    if (params.showFlicker) {
+        if (getTimer() > delay && !switchLamp && params.playing) {
+            switchLamp = true;
+            delay = utils.getRandom(1100, 6000);
+            startTimer();
+        }
+        drawLightFlicker();
+    }
+
+    // Draw bass thumping donut
+    drawDonut(params);
+
+    // Draw visualizer bars
+    clearBars();
+    drawBars();
+    setDashesForBars(ctxLled, lledCanvasWidth, lledCanvasHeight);
+    setDashesForBars(ctxMled, mledCanvasWidth, mledCanvasHeight);
+    setDashesForBars(ctxRled, rledCanvasWidth, rledCanvasHeight);
+
+    // Draw randomized rain
+    if (params.showRRain) {
         if (!rain) {
             rain = new Rain(ctxBg, bgCanvasWidth, audioData, dt);
         }
-        if (document.querySelector('#play-btn').dataset.playing == 'no') dt = 0;
+        if (!params.playing) dt = 0;
         rain.setDt(dt);
-        rain.rainWithThreshold(.34, 1);
+        rain.randomRain(params.rainDensity, params.rRainSize, params.rRainSpeed, params.rRainOpacity);
     }
 
-    if (params.showNoise || params.showInvert || params.showEmboss) {
-
-        // A) grab all of the pixels on the canvas and put them in the `data` array
-        // `imageData.data` is a `Uint8ClampedArray()` typed array that has 1.28 million elements!
-        // the variable `data` below is a reference to that array
-        let imageData = ctxBg.getImageData(0, 0, bgCanvasWidth, bgCanvasHeight);
-        let data = imageData.data;
-        let length = data.length;
-        let width = imageData.width; // not using here
-
-        // B) Iterate through each pixel, stepping 4 elements at a time (which is the RGBA for 1 pixel)
-        for (let i = 0; i < length; i += 4) {
-            // C) randomly change every 20th pixel to red
-            if (params.showNoise && Math.random() < .05) {
-                // data[i] is the red channel
-                // data[i+1] is the green channel
-                // data[i+2] is the blue channel
-                // data[i+3] is the alpha channel
-                data[i] = data[i + 1] = data[i + 2] = 0; // zero out the red and green and blue channel
-                // make the noise light blue
-                data[i] = 15;
-                data[i + 1] = 217;
-                data[i + 2] = 252;
-            } // end if
-            // D) Invert the rgb color channels
-            if (params.showInvert) {
-                let red = data[i], green = data[i + 1], blue = data[i + 2];
-                data[i] = 255 - red; // set red value
-                data[i + 1] = 255 - green; // set green value
-                data[i + 2] = 255 - blue; // set blue value
-                // data[i+3] is the alpha but we're leaving that alone
-            }
-        } // end for
-
-        // note we are stepping through *each* sub-pixel
-        if (params.showEmboss) {
-            for (let i = 0; i < length; i++) {
-                if (i % 4 == 3) continue; // skip alpha channel
-                data[i] = 127 + 2 * data[i] - data[i + 4] - data[i + width * 4];
-            }
+    // Draw music synched rain
+    if (params.showMRain) {
+        if (!rain) {
+            rain = new Rain(ctxBg, bgCanvasWidth, audioData, dt);
         }
-
-        // D) copy image data back to canvas
-        ctxBg.putImageData(imageData, 0, 0);
+        if (!params.playing) dt = 0;
+        rain.setDt(dt);
+        rain.rainWithThreshold(params.rainThreshold, params.mRainSize, params.mRainSpeed, params.mRainOpacity);
     }
 }
 
-function drawBackground(image) {
+function drawBackground() {
     ctxBg.save();
-    if (!bgLoaded) { 
-        bg = utils.preloadImage(image);
-        bgLoaded = true;
-    }
     ctxBg.globalAlpha = 0.3;
-    ctxBg.drawImage(bg, 0, 0, 960, 540);
+    ctxBg.drawImage(images.bg, 0, 0, bgCanvasWidth, bgCanvasHeight);
     ctxBg.restore();
+}
+
+function drawLightFlicker() {
+    ctxBg.save();
+    if (switchLamp) {
+        opacity = utils.getRandom(0.0, 1.0);
+        if (opacity > .99) {
+            opacity = 1;
+            switchLamp = false;
+        }
+        if (opacity < .01) {
+            opacity = 0;
+            switchLamp = false;
+        }
+    }
+    ctxBg.globalAlpha = opacity;
+    ctxBg.drawImage(images.lamp, 0, 0, bgCanvasWidth, bgCanvasHeight);
+    ctxBg.restore();
+}
+
+function drawCityLights(params, bassThresh, midThresh, trebThresh) {
+    if (params.showLights) {
+        if (!prevAudioData || !lowAudioData) {
+            prevAudioData = [...audioData];
+            lowAudioData = [...audioData];
+        }
+
+        let bassIncrease = 0, midIncrease = 0, trebIncrease = 0;
+        for (let i = 0; i < audioData.length; i++) {
+            const diff = audioData[i] / 256 - lowAudioData[i] / 256;
+            const direction = audioData[i] / 256 - prevAudioData[i] / 256;
+            if (diff > 0) {
+                // Bass
+                if (i < 4) {
+                    bassIncrease += diff;
+                }
+                // Midrange
+                else if (i < 17) {
+                    midIncrease += diff;
+                }
+                // Treble
+                else {
+                    trebIncrease += diff;
+                }
+            }
+            if (direction < 0) {
+                // Bass
+                if (i < 4) {
+                    bassIncrease = 0;
+                }
+                // Midrange
+                else if (i < 17) {
+                    midIncrease = 0;
+                }
+                // Treble
+                else {
+                    trebIncrease = 0;
+                }
+                lowAudioData[i] = audioData[i];
+            }
+            prevAudioData[i] = audioData[i];
+        }
+        if (bassIncrease >= bassThresh) {
+            index1 = utils.getRandomDifferent(0, 5, index1);
+            color1 = images.cl1[index1];
+            console.log(`bass:${bassIncrease}`);
+        }
+        if (midIncrease >= midThresh) {
+            index2 = utils.getRandomDifferent(0, 5, index2)
+            color2 = images.cl2[index2];
+            console.log(`mid:${midIncrease}`);
+        }
+        if (trebIncrease >= trebThresh) {
+            index3 = utils.getRandomDifferent(0, 5, index3)
+            color3 = images.cl3[index3];
+            console.log(`treb:${trebIncrease}`);
+        }
+    }
+
+    ctxBg.drawImage(color1, 0, 0, bgCanvasWidth, bgCanvasHeight);
+    ctxBg.drawImage(color2, 0, 0, bgCanvasWidth, bgCanvasHeight);
+    ctxBg.drawImage(color3, 0, 0, bgCanvasWidth, bgCanvasHeight);
+}
+
+function drawDonut(params) {
+    ctxBg.save();
+    ctxBg.translate(0.445 * bgCanvasWidth, 0.2148 * bgCanvasHeight);
+    if (params.showDonut) {
+        const bass = (audioData[0] * 0.5) + (audioData[1] * 0.6) + (audioData[2] * 1.6) + (audioData[3] * 0.55) + (audioData[4] * 0.45) + (audioData[5] * 0.3);
+        const bassPercent = bass / (4 * 256);
+        const scale = utils.lerp(1.0, 1.25, bassPercent);
+        ctxBg.scale(scale, scale);
+    }
+    ctxBg.drawImage(images.donut, -97.5, -87.5, 0.203 * bgCanvasWidth, 0.324 * bgCanvasHeight);
+    ctxBg.restore();
+    ctxBg.drawImage(images.roof, 0, 0, bgCanvasWidth, bgCanvasHeight);
 }
 
 function drawBars() {
@@ -172,25 +250,25 @@ function drawBars() {
     for (let i = 0; i < audioData.length; i++) {
         if (i / audioData.length <= .22) {
             barHeight = (audioData[i] / 256) * lledCanvasHeight;
-            barHeight = utils.clamp(barHeight, .1*lledCanvasHeight, maxBarHeight);
-            drawRect(ctxLled, (1.5*margin) + (i * (barspacing + barWidth)), lledCanvasHeight - barHeight,
-                     barWidth, barHeight, barGradient);
+            barHeight = utils.clamp(barHeight, .1 * lledCanvasHeight, maxBarHeight);
+            drawRect(ctxLled, (1.5 * margin) + (i * (barspacing + barWidth)), lledCanvasHeight - barHeight,
+                barWidth, barHeight, barGradient);
         }
         else if (i / audioData.length <= .78) {
             margin = 1.8;
             if (middleStart == 0) middleStart = i;
             barHeight = (audioData[i] / 256) * mledCanvasHeight;
-            barHeight = utils.clamp(barHeight, .1*mledCanvasHeight, maxBarHeight);
-            drawRect(ctxMled, (1.5*margin) + ((i - middleStart) * (barspacing + barWidth)), mledCanvasHeight - barHeight,
-                     barWidth, barHeight, barGradient);
+            barHeight = utils.clamp(barHeight, .1 * mledCanvasHeight, maxBarHeight);
+            drawRect(ctxMled, (1.5 * margin) + ((i - middleStart) * (barspacing + barWidth)), mledCanvasHeight - barHeight,
+                barWidth, barHeight, barGradient);
         }
         else {
             margin = .5
             if (rightStart == 0) rightStart = i;
             barHeight = (audioData[i] / 256) * rledCanvasHeight;
-            barHeight = utils.clamp(barHeight, .1*rledCanvasHeight, maxBarHeight);
-            drawRect(ctxRled, (1.5*margin) + ((i - rightStart) * (barspacing + barWidth)), rledCanvasHeight - barHeight,
-                     barWidth, barHeight, barGradient);
+            barHeight = utils.clamp(barHeight, .1 * rledCanvasHeight, maxBarHeight);
+            drawRect(ctxRled, (1.5 * margin) + ((i - rightStart) * (barspacing + barWidth)), rledCanvasHeight - barHeight,
+                barWidth, barHeight, barGradient);
         }
     }
 }
@@ -218,26 +296,7 @@ function setDashesForBars(ctx, ctxWidth, ctxHeight) {
     ctx.restore();
 }
 
-function saveAllCanvas() {
-    ctxBg.save();
-    ctxLled.save();
-    ctxMled.save();
-    ctxRled.save();
-}
-function restoreAllCanvas() {
-    ctxBg.restore();
-    ctxLled.restore();
-    ctxMled.restore();
-    ctxRled.restore();
-}
-function fillStyleAllCanvas(style) {
-    ctxBg.fillStyle = style;
-    ctxLled.fillStyle = style;
-    ctxMled.fillStyle = style;
-    ctxRled.fillStyle = style;
-}
-
-function drawRect(ctx, x, y, width, height, fillStyle=0, strokeStyle=0) {
+function drawRect(ctx, x, y, width, height, fillStyle = 0, strokeStyle = 0) {
     ctx.save();
     ctx.beginPath();
     ctx.rect(x, y, width, height);
@@ -251,6 +310,15 @@ function drawRect(ctx, x, y, width, height, fillStyle=0, strokeStyle=0) {
         ctx.stroke();
     }
     ctx.restore();
+}
+
+function startTimer() {
+    time = Date.now();
+}
+
+function getTimer() {
+    const elapsed = Date.now() - time;
+    return elapsed;
 }
 
 export { setupCanvas, draw };

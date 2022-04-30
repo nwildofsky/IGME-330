@@ -10,6 +10,14 @@ export const getRandom = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
+export const getRandomDifferent = (min, max, current) => {
+  let rand = Math.floor(Math.random() * (max - min) + min);
+  while(rand == current) {
+    rand = Math.floor(Math.random() * (max - min) + min)
+  }
+  return rand;
+}
+
 export const getRandomColor = () => {
   const floor = 35; // so that colors are not too bright or too dark 
   const getByte = () => getRandom(floor, 255 - floor);
@@ -41,7 +49,7 @@ export const goFullscreen = (element) => {
 export const preloadImage = (url) => {
   const img = document.createElement('img');
   img.src = url;
-  document.querySelector('#controls').appendChild(img);
+  document.querySelector('main').appendChild(img);
   img.style.display = 'none';
   return img;
 }

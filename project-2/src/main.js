@@ -10,119 +10,60 @@
 import * as utils from './utils.js';
 import * as audio from './audio.js';
 import * as canvas from './canvas.js';
+import * as ajax from './ajax.js';
+import './app-controls.js';
 
 const drawParams = {
-    showGradient: true,
-    showBars: true,
-    showCircles: true,
-    showNoise: false,
-    showInvert: false,
-    showEmboss: false
+    playing: false,
+    showRRain: true,
+    rainDensity: 1,
+    rRainSize: 1,
+    rRainSpeed: 1,
+    rRainOpacity: 1,
+    showMRain: true,
+    rainThreshold: 1,
+    mRainSize: 1,
+    mRainSpeed: 1,
+    mRainOpacity: 1,
+    showFlicker: true,
+    showLights: true,
+    showDonut: true
 };
-// 1 - here we are faking an enumeration
-const DEFAULTS = Object.freeze({
-    sound1: "media/Morning-Routine-Lofi-Study-Music.mp3"
-});
-
+let defaults, images;
 let dt, lastTimestamp = 0;
+
+function loadDefaults(imageList) {
+    images = imageList;
+    defaults = ajax.fetchJSON('./data/defaults.json', defaultsLoaded);
+}
+
+function defaultsLoaded(json) {
+    defaults = json;
+    init();
+}
 
 function init() {
     console.log("init called");
     console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
-    audio.setupWebAudio(DEFAULTS.sound1);
+
+    audio.setupWebAudio(defaults.song);
 
     let bgCanvas = document.querySelector("#bg");
     let lledCanvas = document.querySelector("#left-led");
     let mledCanvas = document.querySelector("#mid-led");
     let rledCanvas = document.querySelector("#right-led");
     setupUI(bgCanvas);
-    canvas.setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, audio.analyserNode);
-    
+    canvas.setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, audio.analyserNode, images);
+
     loop();
 }
 
 function setupUI(bgCanvas) {
-    // A - hookup fullscreen button
-    const fsButton = document.querySelector("#fs-btn");
-
-    // add .onclick event to button
-    fsButton.onclick = e => {
-        console.log("init called");
-        utils.goFullscreen(bgCanvas);
-    };
-
-    const playButton = document.querySelector("#play-btn");
-    playButton.onclick = e => {
-        console.log(`audioCtx.state before = ${audio.audioCtx.state}`);
-
-        // check if context is in suspended state (autoplay policy)
-        if (audio.audioCtx.state == 'suspended') {
-            audio.audioCtx.resume();
-        }
-        console.log(`audioCtx.state after = ${audio.audioCtx.state}`);
-        if (e.target.dataset.playing == 'no') {
-            // if track is currently paused, play it
-            audio.playCurrentSound();
-            e.target.dataset.playing = 'yes'; // our CSS will set the text to pause
-        }
-        // if track is playing, pause it
-        else {
-            audio.pauseCurrentSound();
-            e.target.dataset.playing = 'no'; // our CSS will set the text to play
-        }
-    };
-
-    // C - hookup volume slider & label
-    let volumeSlider = document.querySelector('#volume');
-    let volumeLabel = document.querySelector('#volume-label');
-
-    // add .oninput event to slider
-    volumeSlider.oninput = e => {
-        // set the gain
-        audio.setVolume(e.target.value);
-        // update volume of label to match value of slider
-        volumeLabel.innerHTML = Math.round(e.target.value / 2 * 100);
-    };
-
-    // set value of label to match initial value of slider
-    volumeSlider.dispatchEvent(new Event('input'));
-
-    // D - hookup tack <select>
-    let trackSelect = document.querySelector('#sl-track');
-    // add .onchange event to <select>
-    trackSelect.onchange = e => {
-        audio.loadSoundFile(e.target.value);
-        // pause the current track if it is playing
-        if (playButton.dataset.playing == 'yes') {
-            playButton.dispatchEvent(new MouseEvent('click'));
-        }
-    };
-
-    const gradientCB = document.querySelector("#cb-gradient");
-    gradientCB.onchange = e => {
-        drawParams.showGradient = !drawParams.showGradient;
-    }
-    const barsCB = document.querySelector("#cb-bars");
-    barsCB.onchange = e => {
-        drawParams.showBars = !drawParams.showBars;
-    }
-    const circlesCB = document.querySelector("#cb-circles");
-    circlesCB.onchange = e => {
-        drawParams.showCircles = !drawParams.showCircles;
-    }
-    const noiseCB = document.querySelector("#cb-noise");
-    noiseCB.onchange = e => {
-        drawParams.showNoise = !drawParams.showNoise;
-    }
-    const invertCB = document.querySelector("#cb-invert");
-    invertCB.onchange = e => {
-        drawParams.showInvert = !drawParams.showInvert;
-    }
-    const embossCB = document.querySelector("#cb-emboss");
-    embossCB.onchange = e => {
-        drawParams.showEmboss = !drawParams.showEmboss;
-    }
-
+    const controls = document.createElement('app-controls');
+    controls.drawParams = drawParams;
+    document.querySelector('#app').appendChild(controls);
+    controls.reset(defaults);
+    controls.resetButton.onclick = () => controls.reset(defaults);
 } // end setupUI
 
 function loop(timestamp) {
@@ -133,4 +74,4 @@ function loop(timestamp) {
     canvas.draw(drawParams, dt);
 }
 
-export { init };
+export { loadDefaults };
