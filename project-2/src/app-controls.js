@@ -22,7 +22,7 @@ template.innerHTML = `
   flex-wrap: wrap;
   width: fit-content;
   align-items: center;
-  column-gap: 1.9rem;
+  column-gap: 2.7rem;
   row-gap: .5rem;
   padding-bottom: 1rem;
   margin-bottom: 2rem;
