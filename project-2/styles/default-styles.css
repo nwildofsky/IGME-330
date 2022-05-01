@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
 body {
 	background: rgb(55, 33, 103);
-	font-family: tahoma, verdana, sans serif;
+	font-family: 'Rubik', sans serif;
   position: relative;
   margin: 0;
 }
@@ -46,14 +49,18 @@ main {
 #documentation .title {
   color: #2edf84;
 }
-#documentation a:link {
-  color: white;
+a:link {
+  color: #4998f3;
 }
-#documentation a:visited {
+a:visited {
   color: #137542;
 }
-#documentation a:hover {
+a:hover {
   color: #8cd3d6;
+}
+ul {
+  list-style: outside;
+  margin: 1rem;
 }
 
 /* App page */
@@ -71,7 +78,7 @@ main {
   position: relative;
 }
 #left-led {
-  top: 3px;
+  top: 2px;
   left: -2px;
 }
 #mid-led {
@@ -80,7 +87,7 @@ main {
 }
 #right-led {
   top: -78px;
-  left: 315px;
+  left: 317px;
 }
 
 #app {
@@ -90,83 +97,3 @@ main {
   padding-top: 1.5rem;
   padding-right: 1rem;
 }
-
-/* #controls{
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  margin-left: 1rem;
-  padding: 1rem;
-  width: 33%;
-  height: fit-content;
-  background-color: rgb(23, 23, 23);
-  border-radius: 10px;
-}
-
-#controls section{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: fit-content;
-  align-items: center;
-  column-gap: 1.5rem;
-  row-gap: .5rem;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #8cd3d6;
-}
-#reset-btn {
-  width: fit-content;
-}
-
-.select {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: fit-content;
-  align-items: center;
-  column-gap: .3rem;
-  margin: 0;
-}
-.select label {
-  order: 0;
-}
-
-.button.is-success {
-  background-color: #2edf84 !important;
-  color: black !important;
-}
-.button.is-success:hover {
-  background-color: #189b57 !important;
-  color: black !important;
-}
-.button.is-success:active {
-  background-color: #8cd3d6 !important;
-  color: black !important;
-}
-
-.checkbox:hover {
-  color: #8cd3d6;
-}
-
-button[data-playing="yes"]:after{
-  content: "Pause";
-}
-
-button[data-playing="no"]:after{
-  content: "Play";
-}
-
-.slider {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: fit-content;
-  align-items: center;
-  column-gap: .3rem;
-  margin: 0;
-}
-
-input[type = 'range'], input[type = 'checkbox'] {
-  accent-color: #2edf84;
-} */

@@ -5,6 +5,7 @@ template.innerHTML = `
 .logo-text {
     font-weight: 600;
     padding-left: .1rem;
+    font-family: 'Lobster', cursive;
 }
 .navbar.has-shadow {
   box-shadow: 0 2px 0 0 #30cf7f;
@@ -36,7 +37,7 @@ template.innerHTML = `
 
     <div class="navbar-menu" id="nav-links">
       <div class="navbar-start">
-        <a class="navbar-item" href="./index.html" data-location="current-page">
+        <a class="navbar-item" href="./home.html" data-location="current-page">
           Home
         </a>
 
@@ -70,11 +71,11 @@ class AppNavbar extends HTMLElement {
       const linkPage = linkURL[linkURL.length - 1];
       if (pageNoQuery) {
         if (pageNoQuery == linkPage) {
-          link.style.fontWeight = 650;
+          link.style.fontWeight = 750;
         }
       }
       else if (page == linkPage) {
-        link.style.fontWeight = 650;
+        link.style.fontWeight = 750;
       }
     }
   }

@@ -3,16 +3,13 @@
     and setting up the main event loop
 */
 
-// We will write the functions in this file in the traditional ES5 way
-// In this instance, we feel the code is more readable if written this way
-// If you want to re-write these as ES6 arrow functions, to be consistent with the other files, go ahead!
-
 import * as utils from './utils.js';
 import * as audio from './audio.js';
 import * as canvas from './canvas.js';
 import * as ajax from './ajax.js';
 import './app-controls.js';
 
+// Parameters that control the drawing of all the elements on the canvas
 const drawParams = {
     playing: false,
     showRRain: true,
@@ -32,22 +29,23 @@ const drawParams = {
 let defaults, images;
 let dt, lastTimestamp = 0;
 
+// Load the defaults object from a json file before setting up the application
 function loadDefaults(imageList) {
     images = imageList;
     defaults = ajax.fetchJSON('./data/defaults.json', defaultsLoaded);
 }
 
+// Callback function that begins app setup when the defaults are loaded
 function defaultsLoaded(json) {
     defaults = json;
     init();
 }
 
+// Function to set up the application and start the drawing loop
 function init() {
-    console.log("init called");
-    console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
-
     audio.setupWebAudio(defaults.song);
 
+    // Grab a reference to each canvas used
     let bgCanvas = document.querySelector("#bg");
     let lledCanvas = document.querySelector("#left-led");
     let mledCanvas = document.querySelector("#mid-led");
@@ -55,17 +53,25 @@ function init() {
     setupUI(bgCanvas);
     canvas.setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, audio.analyserNode, images);
 
+    // Start the loop that draws to the canvas each frame
     loop();
 }
 
 function setupUI(bgCanvas) {
+    // All of the UI controls are handled within their own web component
     const controls = document.createElement('app-controls');
+    // Give the controls component a reference to the drawParams so that changes
+    // made in the component carry over to main's reference of the drawParams
     controls.drawParams = drawParams;
     document.querySelector('#app').appendChild(controls);
+    // Calling reset once also functions as a setup for all the controls
     controls.reset(defaults);
     controls.resetButton.onclick = () => controls.reset(defaults);
-} // end setupUI
+}
 
+// Loop function is called every frame
+// Calculates the delta time and then makes a call to the canvas' draw method
+// with the current drawParams and delta time
 function loop(timestamp) {
     requestAnimationFrame(loop);
     dt = timestamp - lastTimestamp;

@@ -1,3 +1,9 @@
+/*
+    pwarp.js allows for perspective transformations using the css property matrix3D.
+    pwarp uses matrix math to find the matrix that is required to take an element
+    from its current position to a specified warped position.
+*/
+
 import * as matrix from './matrix.js'
 
 // https://math.stackexchange.com/questions/296794/finding-the-transform-matrix-from-4-projected-points-with-javascript

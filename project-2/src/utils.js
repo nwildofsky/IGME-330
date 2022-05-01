@@ -10,6 +10,9 @@ export const getRandom = (min, max) => {
   return Math.random() * (max - min) + min;
 };
 
+// Get a random int that is different than the current int value
+// Loop until a different number is found
+// Only use with large enough random ranges
 export const getRandomDifferent = (min, max, current) => {
   let rand = Math.floor(Math.random() * (max - min) + min);
   while(rand == current) {
@@ -46,6 +49,7 @@ export const goFullscreen = (element) => {
   // .. and do nothing if the method is not supported
 };
 
+// Discretely add an image element to the DOM so it can be used in javascript
 export const preloadImage = (url) => {
   const img = document.createElement('img');
   img.src = url;
@@ -54,6 +58,8 @@ export const preloadImage = (url) => {
   return img;
 }
 
+// Give a value a hard minimum and maximum cutoff
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
+// Linear interpolate from a start point to an endpoint with a given percentage
 export const lerp = (min, max, percent) => min + (max - min) * percent;

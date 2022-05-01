@@ -91,11 +91,13 @@ input[type = 'range'], input[type = 'checkbox'] {
     <div class="select is-success">
       <label for="sl-track">Track:</label>
       <select id="sl-track">
-        <option value="media/Morning-Routine-Lofi-Study-Music.mp3" selected>Lofi Morning Routine
-        </option>
-        <option value="media/Missing-You.mp3">Missing You Lofi</option>
-        <option value="media/Lo-Fi-Lounge-Chill-Hip-Hop-CITY.mp3">Lofi Lounge Hip Hop</option>
-        <option value="media/soft-lo-fi-beat.mp3">Soft Lofi Beat</option>
+      <option value="media/sincere.mp3" selected>Sincere</option>
+      <option value="media/rain-on-sunday.mp3">Rain on Sunday</option>
+      <option value="media/planet-buddies.mp3">Planet Buddies</option>
+      <option value="media/mist.mp3">Mist</option>
+      <option value="media/dusk.mp3">Dusk</option>
+      <option value="media/mourning-dove.mp3">Mourning Dove</option>
+
       </select>
     </div>
 
@@ -277,50 +279,42 @@ class AppControls extends HTMLElement {
       this.drawParams.rainDensity = Number(1 / e.target.value);
       this.densityLabel.innerHTML = Math.round(e.target.value / 3 * 100);
     };
-    // this.densitySlider.dispatchEvent(new Event('input'));
 
     this.rSizeSlider.oninput = e => {
       this.drawParams.rRainSize = Number(e.target.value);
       this.rSizeLabel.innerHTML = Math.round(e.target.value / 3 * 100);
     };
-    // this.rSizeSlider.dispatchEvent(new Event('input'));
 
     this.rSpeedSlider.oninput = e => {
       this.drawParams.rRainSpeed = Number(e.target.value);
       this.rSpeedLabel.innerHTML = Math.round(e.target.value / 2 * 100);
     };
-    // this.rSpeedSlider.dispatchEvent(new Event('input'));
 
     this.rOpacitySlider.oninput = e => {
       this.drawParams.rRainOpacity = Number(e.target.value);
       this.rOpacityLabel.innerHTML = Math.round(e.target.value * 100);
     };
-    // this.rOpacitySlider.dispatchEvent(new Event('input'));
 
     // Music synched rain sliders
     this.thresholdSlider.oninput = e => {
       this.drawParams.rainThreshold = Number(e.target.value);
       this.thresholdLabel.innerHTML = Math.round(e.target.value * 100);
     };
-    // this.thresholdSlider.dispatchEvent(new Event('input'));
 
     this.mSizeSlider.oninput = e => {
       this.drawParams.mRainSize = Number(e.target.value);
       this.mSizeLabel.innerHTML = Math.round(e.target.value / 6 * 100);
     };
-    // this.mSizeSlider.dispatchEvent(new Event('input'));
 
     this.mSpeedSlider.oninput = e => {
       this.drawParams.mRainSpeed = Number(e.target.value);
       this.mSpeedLabel.innerHTML = Math.round(e.target.value / 2 * 100);
     };
-    // this.mSpeedSlider.dispatchEvent(new Event('input'));
 
     this.mOpacitySlider.oninput = e => {
       this.drawParams.mRainOpacity = Number(e.target.value);
       this.mOpacityLabel.innerHTML = Math.round(e.target.value / 2 * 100);
     };
-    // this.mOpacitySlider.dispatchEvent(new Event('input'));
 
     // Hookup checkboxes
     this.rRainCB.onchange = e => {
@@ -341,6 +335,7 @@ class AppControls extends HTMLElement {
   }
 
   disconnectedCallback() {
+    // Disconnect all event handlers when this component is removed from the page
     this.densitySlider.oninput = null;
     this.rSizeSlider.oninput = null;
     this.rSpeedSlider.oninput = null;
@@ -355,7 +350,9 @@ class AppControls extends HTMLElement {
     this.donutCB.onchange = null;
   }
 
+  // Use a defaults json object to reset every parameter that manipulates the scene
   reset(defaults) {
+    // Reset random rain options
     this.rRainCB.checked = defaults.showRRain;
     this.drawParams.showRRain = defaults.showRRain;
     this.densitySlider.value = defaults.rainDensity;
@@ -367,6 +364,7 @@ class AppControls extends HTMLElement {
     this.rOpacitySlider.value = defaults.rRainOpacity;
     this.rOpacitySlider.dispatchEvent(new Event('input'));
 
+    // Reset synched rain options
     this.mRainCB.checked = defaults.showMRain;
     this.drawParams.showMRain = defaults.showMRain;
     this.thresholdSlider.value = defaults.rainThreshold;
@@ -378,6 +376,7 @@ class AppControls extends HTMLElement {
     this.mOpacitySlider.value = defaults.mRainOpacity;
     this.mOpacitySlider.dispatchEvent(new Event('input'));
 
+    // Reset additional checkbox options
     this.flickerCB.checked = defaults.showFlicker;
     this.drawParams.showFlicker = defaults.showFlicker;
     this.lightsCB.checked = defaults.showLights;

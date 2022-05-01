@@ -22,7 +22,7 @@ let color1, color2, color3, index1, index2, index3;
 let prevAudioData = null, lowAudioData = null;
 let rain;
 
-
+// Initialize global vairables used in drawing and setup each canvas' perspectives
 function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeRef, imageList) {
     // create drawing contexts
     ctxBg = bgCanvas.getContext("2d");
@@ -49,7 +49,7 @@ function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeR
     // this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize / 2);
 
-    // Set the LED canvas' into their proper spaces
+    // Set the LED canvas' into their proper spaces with perspective tranformations
     let warp = pwarp.getProjectionMatrix(0, 540, 220, 227.55,
         91, 540, 311, 220.5,
         91, 580, 311, 260.5,
@@ -68,7 +68,7 @@ function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeR
         0, 580, 213, 269);
     rledCanvas.style.transform = warp;
 
-    // Grab images to draw
+    // Grab the default city light images to draw
     images = imageList;
     index1 = 1;
     color1 = images.cl1[index1];
@@ -77,10 +77,12 @@ function setupCanvas(bgCanvas, lledCanvas, mledCanvas, rledCanvas, analyserNodeR
     index3 = 0;
     color3 = images.cl3[index3];
 
+    // Start the timer and set the delay for the lampost flicker effect
     startTimer();
     delay = utils.getRandom(1100, 6000);
 }
 
+// Function that contains all methods of drawing images and objects onto the canvas
 function draw(params = {}, dt = 0) {
     // Populate the audioData array with the frequency data from the analyserNode
     analyserNode.getByteFrequencyData(audioData);
@@ -89,7 +91,6 @@ function draw(params = {}, dt = 0) {
     drawBackground();
 
     // Draw changing background lights
-    // drawCityLights(7,14,7.5);
     drawCityLights(params, 1.3, 3.7, 2);
 
     // Draw flickering lamp
@@ -133,6 +134,7 @@ function draw(params = {}, dt = 0) {
     }
 }
 
+// Draw the background scene at a low opacity so moving elements will have trails
 function drawBackground() {
     ctxBg.save();
     ctxBg.globalAlpha = 0.3;
@@ -140,10 +142,14 @@ function drawBackground() {
     ctxBg.restore();
 }
 
+// Periodically draw the lapost light flickering
 function drawLightFlicker() {
     ctxBg.save();
     if (switchLamp) {
+        // Flicker the light by giving the image that removes the light a random opacity
         opacity = utils.getRandom(0.0, 1.0);
+        // Set the light back to on or off when it randomly reaches a high or low value
+        // Values are so close to 1 and 0 to increase light flicker time
         if (opacity > .99) {
             opacity = 1;
             switchLamp = false;
@@ -158,6 +164,9 @@ function drawLightFlicker() {
     ctxBg.restore();
 }
 
+// Draw the lights of the building windows in the scene
+// Change the light color randomly with large frequency increases in
+// the bass, mid, and treble audio regions
 function drawCityLights(params, bassThresh, midThresh, trebThresh) {
     if (params.showLights) {
         if (!prevAudioData || !lowAudioData) {
@@ -167,8 +176,11 @@ function drawCityLights(params, bassThresh, midThresh, trebThresh) {
 
         let bassIncrease = 0, midIncrease = 0, trebIncrease = 0;
         for (let i = 0; i < audioData.length; i++) {
+            // Calculate the difference from the current frequency and the last baseline's frequency
             const diff = audioData[i] / 256 - lowAudioData[i] / 256;
+            // Calculate the difference from the current frequency and the frequency just before it
             const direction = audioData[i] / 256 - prevAudioData[i] / 256;
+            // If the frequency increased from the baseline, record the increase
             if (diff > 0) {
                 // Bass
                 if (i < 4) {
@@ -183,6 +195,7 @@ function drawCityLights(params, bassThresh, midThresh, trebThresh) {
                     trebIncrease += diff;
                 }
             }
+            // If the frequency dropped from the last frame, zero out the increase
             if (direction < 0) {
                 // Bass
                 if (i < 4) {
@@ -196,10 +209,13 @@ function drawCityLights(params, bassThresh, midThresh, trebThresh) {
                 else {
                     trebIncrease = 0;
                 }
+                // Record a new baseline everytime the frequency decreases
                 lowAudioData[i] = audioData[i];
             }
+            // Record the last frame's frequency
             prevAudioData[i] = audioData[i];
         }
+        // Get a new color when the freuency increase is above the threshold
         if (bassIncrease >= bassThresh) {
             index1 = utils.getRandomDifferent(0, 5, index1);
             color1 = images.cl1[index1];
@@ -222,21 +238,29 @@ function drawCityLights(params, bassThresh, midThresh, trebThresh) {
     ctxBg.drawImage(color3, 0, 0, bgCanvasWidth, bgCanvasHeight);
 }
 
+// Draw the donut light on top of the show and scale it with the song's current approximated bass value
 function drawDonut(params) {
     ctxBg.save();
     ctxBg.translate(0.445 * bgCanvasWidth, 0.2148 * bgCanvasHeight);
     if (params.showDonut) {
-        const bass = (audioData[0] * 0.5) + (audioData[1] * 0.6) + (audioData[2] * 1.6) + (audioData[3] * 0.55) + (audioData[4] * 0.45) + (audioData[5] * 0.3);
-        const bassPercent = bass / (4 * 256);
+        // Calculate an approximate bass value by weighting each of the lower frequencies and adding them up
+        const bass = (audioData[0] * 0.55) + (audioData[1] * 0.6) + (audioData[2] * 1.6) + (audioData[3] * 0.5)
+                     + (audioData[4] * 0.25) + (audioData[5] * 0.1);
+        // Get the percentage of the current bass value from its maximum
+        const bassPercent = bass / (3.8 * 256);
+        // Scale the donut according to this bass percentage
         const scale = utils.lerp(1.0, 1.25, bassPercent);
         ctxBg.scale(scale, scale);
     }
     ctxBg.drawImage(images.donut, -97.5, -87.5, 0.203 * bgCanvasWidth, 0.324 * bgCanvasHeight);
     ctxBg.restore();
+    // Draw the top of the shop over the donut so it looks like the donut is always behind the shop
     ctxBg.drawImage(images.roof, 0, 0, bgCanvasWidth, bgCanvasHeight);
 }
 
+// Draw the audio visualizer bars onto the shops 3 led screens
 function drawBars() {
+    // Set the dimensions of the bars
     let barspacing = 2;
     let margin = 0;
     let screenWidthForBars = (lledCanvasWidth + mledCanvasWidth + rledCanvasWidth) - (audioData.length * barspacing) - margin * 2;
@@ -244,16 +268,18 @@ function drawBars() {
     let barHeight = 1;
     let maxBarHeight = 35;
 
-    // loop through the data and draw
+    // loop through the audio data and draw a bar for each audio bin
     let middleStart = 0;
     let rightStart = 0;
     for (let i = 0; i < audioData.length; i++) {
+        // Draw the first 8 bars on the left led screen
         if (i / audioData.length <= .22) {
             barHeight = (audioData[i] / 256) * lledCanvasHeight;
             barHeight = utils.clamp(barHeight, .1 * lledCanvasHeight, maxBarHeight);
             drawRect(ctxLled, (1.5 * margin) + (i * (barspacing + barWidth)), lledCanvasHeight - barHeight,
                 barWidth, barHeight, barGradient);
         }
+        // Draw the middle 17 bars on the middle led screen
         else if (i / audioData.length <= .78) {
             margin = 1.8;
             if (middleStart == 0) middleStart = i;
@@ -262,6 +288,7 @@ function drawBars() {
             drawRect(ctxMled, (1.5 * margin) + ((i - middleStart) * (barspacing + barWidth)), mledCanvasHeight - barHeight,
                 barWidth, barHeight, barGradient);
         }
+        // Draw the last 7 bars on the right led screen
         else {
             margin = .5
             if (rightStart == 0) rightStart = i;
@@ -273,6 +300,7 @@ function drawBars() {
     }
 }
 
+// Clear each led canvas
 function clearBars() {
     ctxLled.beginPath();
     ctxLled.clearRect(0, 0, lledCanvasWidth, lledCanvasHeight);
@@ -285,6 +313,7 @@ function clearBars() {
     ctxRled.closePath();
 }
 
+// Step through the canvas' height and add horizontal lines at each step
 function setDashesForBars(ctx, ctxWidth, ctxHeight) {
     let step = 4;
     let height = 1;
@@ -296,6 +325,7 @@ function setDashesForBars(ctx, ctxWidth, ctxHeight) {
     ctx.restore();
 }
 
+// Helper function for drawing a rectangle onto a canvas
 function drawRect(ctx, x, y, width, height, fillStyle = 0, strokeStyle = 0) {
     ctx.save();
     ctx.beginPath();
